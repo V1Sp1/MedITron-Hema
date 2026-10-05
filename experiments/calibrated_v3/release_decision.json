@@ -1,0 +1,5 @@
+{
+  "promote_default": false,
+  "reason": "Fresh independent labeled validation required by prespecified policy; repeated holdout is diagnostic only.",
+  "candidate_selection_changed_after_holdout": false
+}

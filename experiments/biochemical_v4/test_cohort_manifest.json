@@ -1,0 +1,30 @@
+{
+  "nhanes_2007_2008": {
+    "source_rows": 10149,
+    "eligible_adults": 5981,
+    "source_sha256": {
+      "data/external/raw/nhanes_2007_2008/DEMO_E.xpt": "02b8e97703d04bc99769c751881bece51ac9ba68cf18a2992a45d3bdfb856147",
+      "data/external/raw/nhanes_2007_2008/CBC_E.xpt": "e83558b948eaf1b002e029d69731c01c81935ebf85013358d59d2aa95ad38a26",
+      "data/external/raw/nhanes_2007_2008/BIOPRO_E.xpt": "6c2cec1e790c09e0319bf5a576a2ab64861d4270679c8113663f83a6b7087ced",
+      "data/external/raw/nhanes_2007_2008/CRP_E.xpt": "5cf3fc87d8c5eb8b8c053e5a8ea183b62dd29b417c4aeaaa53dc4b354ef611ab",
+      "data/external/raw/nhanes_2007_2008/FERTIN_E.xpt": "885c4a8c159a79bd9110e608f5b8b8305276c83679cf8291b92b18ed17922e44",
+      "data/external/raw/nhanes_2007_2008/VIT_B6_E.xpt": "ce00e8885a4777c91e84ad6c13ef065f98089afae6cd2850b4712f77eddf78c2"
+    },
+    "exact_CBC_matches_excluded": 0,
+    "duplicates_excluded": 0,
+    "rows_after_audit": 5981
+  },
+  "nhanes_2013_2014": {
+    "source_rows": 10175,
+    "eligible_adults": 5768,
+    "source_sha256": {
+      "data/external/raw/nhanes_2013_2014/DEMO_H.xpt": "f8f0cbb3085a323d4cde22349b164878fea1e64dbc404e65b5815c7816b547d7",
+      "data/external/raw/nhanes_2013_2014/CBC_H.xpt": "08f6fca4aacebacafb2b311c2edfc6897ad92f2c8f8dab14e18bf41acdc4ddee",
+      "data/external/raw/nhanes_2013_2014/BIOPRO_H.xpt": "b114fde7fc46933e6b4e3f620b8e7b61ea5b46f82121c0dc05a7b8c1fbdd0548",
+      "data/external/raw/nhanes_2013_2014/VITB12_H.xpt": "6d280479d279379a1f67278722e3b6a1f1a3566c06dfc3a1f02c9713975633ae"
+    },
+    "exact_CBC_matches_excluded": 0,
+    "duplicates_excluded": 0,
+    "rows_after_audit": 5768
+  }
+}

@@ -1,0 +1,438 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Структура и архитектура проекта Hema</title><style>body{margin:0;background:#eef4f5;color:#103648;font:17px/1.65 system-ui,sans-serif}main{max-width:1050px;margin:24px auto;background:white;padding:38px;border-radius:12px}h1{font-size:32px;line-height:1.25}h2{margin-top:42px}img{max-width:100%;height:auto}a{color:#086a70}code{font:14px/1.5 ui-monospace,monospace;background:#edf3f4;padding:2px 4px}pre{overflow:auto;background:#edf3f4;padding:18px;border-radius:6px;white-space:pre}pre code{padding:0}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:9px;text-align:left;border:1px solid #d4e0e3;vertical-align:top}th{background:#eef5f6}.table{overflow:auto}nav{display:flex;flex-wrap:wrap;gap:12px;border-bottom:1px solid #d4e0e3;padding-bottom:18px}p,li{overflow-wrap:anywhere}@media(max-width:650px){main{margin:0;padding:20px;border-radius:0}h1{font-size:26px}}@media print{body{background:white}main{margin:0;padding:0;max-width:none}nav{display:none}pre{white-space:pre-wrap}.table{overflow:visible}h2,h3{break-after:avoid}tr{break-inside:avoid}}</style></head><body><main><nav><a href="../START_HERE.html">Начало</a></nav><h1>Структура и архитектура проекта Hema</h1>
+<p>Это карта фактической реализации для нового участника команды. Она связывает пользовательские действия с файлами кода, объясняет границы компонентов и содержит полный реестр файлов передаваемого снимка. Актуальный источник принятых решений — <code>RELEASE_NOTES.md</code>; результаты первой серии обучения — <code>experiments/baseline_v1/REPORT.md</code>.</p>
+<h2>Общая архитектура</h2>
+<p>Hema — один локальный Python-сервис и статический веб-интерфейс. Браузер отображает HTML/CSS/JavaScript; FastAPI отдаёт страницы и обслуживает API; Python-парсер извлекает PDF; сохранённые классификаторы выполняют inference; SQLite :memory: хранит временные наблюдения/отчёты/PDF; auth.sqlite3 отдельно хранит учётные записи/организации/хеши. В основном способе запуска сайт и API находятся на одном адресе <code>http://127.0.0.1:8000/</code>. Отдельный Node.js-сервер не нужен.</p>
+<pre><code>Человек → браузер → frontend/src/app.js
+                       ↓ frontend/src/api.js
+             FastAPI backend/app.py
+                  ┌────┴──────────────────────────┐
+          PDF-импорт                         ручные/табличные входы
+                  ↓                               ↓
+ backend/parser_service.py                 backend/features.py
+     отдельный Python-процесс               проверка 37 признаков
+                  ↓                               ↓
+        lab_parser/*                     backend/screening.py
+   исходные строки и кандидаты             правило пола и Hb
+                  ↓                               ↓
+ backend/features.py                     backend/model_service.py
+   единицы, черновик формы                ml_baselines/predict.py
+                  ↓                       выбранные joblib-веса
+ подтверждение человеком                          ↓
+                  └────────────────────→ backend/verdicts.py
+                                          проверка согласованности
+                                                   ↓
+                                  backend/recommendations.py
+                               полнота, выводы и следующие шаги
+                                                   ↓
+                                        backend/store.py
+                                  RAM SQLite :memory:, TTL и снимок фраз
+                                                   ↓
+                           браузер → экран результата → PDF/JSON</code></pre>
+<p>Правило Hb, обучение модели и подбор фраз — три разных механизма. Каталоги текстов не обучают модель. Модельные оценки не меняют порог Hb. Парсер не выбирает диагноз: он сохраняет кандидаты значений и их происхождение.</p>
+<h2>Верхний уровень</h2>
+<div class="table"><table><thead><tr><th>Каталог или файл</th><th>Назначение</th><th>Нужен для обычного запуска</th></tr></thead><tbody>
+<tr><td><code>backend/</code></td><td>Сервер, модельный адаптер, проверка входов, рекомендации, SQLite</td><td>Да</td></tr>
+<tr><td><code>lab_parser/</code></td><td>PDF-текст, таблицы, локальный OCR, даты, единицы и структура наблюдения</td><td>Да для PDF; пакет ставится вместе с сервером</td></tr>
+<tr><td><code>frontend/</code></td><td>HTML-страницы, CSS, JS, шрифты, изображения, тесты, снимки и сборка</td><td>Да</td></tr>
+<tr><td><code>ml_baselines/</code></td><td>Обучение, preprocessing, исследовательский inference и отчёт</td><td>Да, inference импортирует общий код</td></tr>
+<tr><td><code>experiments/baseline_v1/models/selected.joblib</code></td><td>Основной переносимый комплект обученных классификаторов</td><td>Да для модельного режима</td></tr>
+<tr><td><code>experiments/baseline_v1/</code></td><td>В рабочем проекте веса/разбиения/метрики; в ZIP selected weights и агрегаты</td><td>Для воспроизведения и аудита</td></tr>
+<tr><td><code>experiments/robust_v2/</code>, <code>experiments/calibrated_v3/</code></td><td>Исследовательские кандидаты: выбранные веса, агрегированные метрики, отчёты, снимки кода</td><td>Альтернативный inference и аудит</td></tr>
+<tr><td><code>experiments/external_validation_v1/</code></td><td>Внешняя проверка замороженных v1/v2/v3; протокол, сводные результаты и отчёт</td><td>Для оценки переносимости; таблицы отдельных людей исключены</td></tr>
+<tr><td><code>experiments/biochemical_v4/</code></td><td>Отдельные головы низких биомаркеров, выбранные веса, протокол, пороги, агрегаты и отчёт</td><td>Ферритин интегрирован отдельным выходом; B12/PLP доступны в CLI</td></tr>
+<tr><td><code>data/feature_dictionary.json</code></td><td>Схема 48 столбцов, роли, единицы и хеши источников</td><td>Да</td></tr>
+<tr><td><code>data/reference/variables.xlsx</code></td><td>Предоставленный словарь признаков</td><td>Для аудита</td></tr>
+<tr><td><code>data/case/</code></td><td>Исходные материалы отдельно; CSV/PDF требований в публичный выпуск не включены</td><td>CSV вне ZIP; для inference не требуется</td></tr>
+<tr><td><code>data/external/</code></td><td>Внешние данные, обработанные производные, метаданные и пояснения</td><td>В ZIP пояснения и технический unit_mapping.json; построчные таблицы исключены</td></tr>
+<tr><td><code>data/local/</code></td><td>Создаётся при запуске: auth DB, временные файлы; медзаписи только RAM</td><td>Не включён; у получателя создаётся заново</td></tr>
+<tr><td><code>scripts/</code></td><td>Аудиты, подготовка внешних данных, запуск и сборка передачи</td><td>Вспомогательные инструменты</td></tr>
+<tr><td><code>tests/</code></td><td>Python-тесты парсера, API, модели, рекомендаций</td><td>Для разработки</td></tr>
+<tr><td><code>output/</code></td><td>Сохранённые результаты проверки парсера и наборы примеров</td><td>История проверок</td></tr>
+<tr><td><code>tmp/</code></td><td>Публичные PDF-образцы и изображения для проверки</td><td>Рабочие примеры; tmp не включён в ZIP</td></tr>
+<tr><td><code>docs/</code></td><td>Новые руководства Markdown и HTML</td><td>Для команды</td></tr>
+<tr><td><code>pyproject.toml</code></td><td>Установка Python-пакетов, extras server/model/test и CLI</td><td>Да</td></tr>
+<tr><td><code>README.md</code></td><td>Вход в проект и документацию</td><td>Для команды</td></tr>
+<tr><td><code>RELEASE_NOTES.md</code></td><td>Требования, проверенные факты, решения, история и открытые вопросы</td><td>Для всех участников</td></tr>
+<tr><td><code>EXTERNAL_DATASETS.md</code></td><td>Подробный аудит внешних источников и условий использования</td><td>Для исследователей</td></tr>
+<tr><td><code>FEATURE_UNITS.md</code></td><td>Единицы всех признаков и различия внешних источников</td><td>Для интеграции данных</td></tr>
+<tr><td><code>KILICARSLAN_ANALYSIS.md</code></td><td>Аудит правил разметки и производных Kılıçarslan</td><td>Для исследований</td></tr>
+</tbody></table></div>
+<h2>Точки входа и конфигурация</h2>
+<p><code>python -m backend</code> вызывает <code>backend/__main__.py</code>, разбирает параметры и передаёт их в <code>create_app</code>. Затем Uvicorn слушает только loopback. <code>python -m lab_parser</code> вызывает CLI PDF-парсера. <code>python -m ml_baselines.train</code> создаёт новый эксперимент. <code>python -m ml_baselines.predict</code> выполняет исследовательский прогноз из JSON. HTML стартует с <code>frontend/index.html</code>, далее открывается выбранная страница роли.</p>
+<p>Корень проекта определяется по расположению Python-файлов, а не по имени папки пользователя. Зависимости устанавливаются editable, чтобы код и данные читались из распакованного дерева. Не переносите только <code>backend/</code>: ему нужны <code>frontend/</code>, <code>lab_parser/</code>, <code>ml_baselines/</code>, словарь и веса.</p>
+<p>Новый контур безопасности: backend/privacy.py, worker_limits.py, privacy_admin.py, integrations.py, auth.py; UI gate frontend/src/privacy.js. Юридические шаблоны каждой стороны — docs/legal. Серверные медицинские записи доступны только своей research-cookie, врачебные дополнительно своей учётной записи. Лабораторный API не сохраняет объекты.</p>
+<p>Главные параметры сервера: <code>--port</code>, <code>--data-dir</code>, <code>--ocr</code>, <code>--freshness-policy</code>, <code>--phrase-file</code>, <code>--model-bundle</code>, <code>--no-model</code>. Переменная <code>HEMA_DATA_DIR</code> позволяет перенести рабочее хранилище. Все параметры объяснены в руководстве бэкенда. В текущей версии нет <code>.env</code> с секретом или облачного ключа, необходимого для основного запуска.</p>
+<h2>Три сценария движения данных</h2>
+<h3>Ручной ввод и таблица</h3>
+<p>Пользователь заполняет возраст, пол и Hb, при желании остальные анализы. CSV/XLSX читаются в браузере, выбирается одна строка. JS отбирает только допустимые входы и передаёт числовой объект в API выбранной роли. Сервер повторно проверяет значения, рассчитывает Hb, запускает сохранённые модели, применяет политику воздержания, сохраняет отчёт со снимком фраз. Браузер отдельно запрашивает рекомендации для ID отчёта и показывает результат. Исходная таблица не загружается целиком на сервер в этом сценарии.</p>
+<h3>PDF</h3>
+<p>Пакет PDF отправляется в multipart-поле <code>files</code>. После подтверждения research-сеанса сервер создаёт временные приватные копии, запускает worker, минимизирует извлечение и удаляет каталог. Исходные PDF остаются только RAM BLOB до часа. Он возвращает документы, страницы, строки и измерения. API добавляет канонические единицы и черновик формы, но не выбирает повторные измерения и границы <code>&lt;</code>/<code>&gt;</code>. Человек проверяет форму, указывает возраст/пол и подтверждает. При расчёте передаются ID и ревизия наблюдения; сервер обновляет проверенные входы и создаёт связанный отчёт.</p>
+<h3>Демонстрация</h3>
+<p>«Посмотреть пример» показывает заранее подготовленные числа из <code>src/demo.js</code>. Это пример интерфейса, не текущий inference. Изменение формы снимает демо. Для фактической проверки нужно заполнить форму самостоятельно или импортировать файл и нажать расчёт.</p>
+<h2>Согласование схем</h2>
+<p>Всего в CSV 48 столбцов: 1 идентификатор, 37 входов и 10 меток. На вход модели попадают только 37 признаков. Все 10 меток и <code>patient_id</code> исключаются, иначе возникла бы утечка ответа. Пропуск остаётся <code>null</code> в API, затем NaN в модели. Нельзя превращать отсутствующее измерение в ноль.</p>
+<p>Единицы словаря должны совпадать с единицами обучения. В модели хранится SHA-256 исходного словаря <code>variables.xlsx</code>; API дополнительно проверяет набор/порядок признаков, цели и классы. Изменение схемы требует согласованного обновления словаря, фронтенда, API, тестов и весов, а не только переименования одной подписи.</p>
+<h2>Где менять поведение</h2>
+<div class="table"><table><thead><tr><th>Задача</th><th>Начальные файлы</th><th>Что проверить после изменения</th></tr></thead><tbody>
+<tr><td>Добавить лабораторный признак</td><td>словарь, <code>backend/features.py</code>, <code>ml_baselines/core.py</code>, <code>frontend/src/data.js</code></td><td>Совместимость весов и схемы; переобучение может быть необходимо</td></tr>
+<tr><td>Исправить извлечение PDF</td><td><code>lab_parser/parsing.py</code>, <code>catalog.py</code>, <code>data/analytes.json</code></td><td>Парсер-тесты, исходные значения, происхождение и повторы</td></tr>
+<tr><td>Добавить пересчёт единиц</td><td><code>backend/features.py</code></td><td>Размерности, исходное число, отсутствие неявных догадок</td></tr>
+<tr><td>Изменить алгоритм обучения</td><td><code>ml_baselines/core.py</code>, <code>train.py</code></td><td>Новая серия, отдельная оценка; старый experiment не перезаписывать</td></tr>
+<tr><td>Изменить отказ от причинного вывода</td><td><code>backend/model_service.py</code>, <code>verdicts.py</code></td><td>Hb/классы/дефициты, sparse, обе роли, рекомендации</td></tr>
+<tr><td>Изменить фразы</td><td><code>backend/data/recommendations_*.json</code>, <code>recommendations.py</code></td><td>Условия, версия, обе роли, ограничения и сохранённые снимки</td></tr>
+<tr><td>Изменить полноту</td><td><code>backend/data/sufficiency_policy.json</code>, <code>data_sufficiency.py</code></td><td>Группы альтернатив, минимум 5, влияние на отказ и фразы</td></tr>
+<tr><td>Изменить интерфейс</td><td><code>frontend/src/app.js</code>, CSS, HTML</td><td>Состояние формы, ошибки API, экспорт, мобильный размер</td></tr>
+<tr><td>Изменить PDF-отчёт</td><td><code>frontend/src/pdf-report.js</code></td><td>Кириллица, переносы, длинные отчёты, лицензии шрифтов</td></tr>
+<tr><td>Изменить хранение</td><td><code>backend/store.py</code>, <code>app.py</code></td><td>Ревизии, перезапуск, приватность путей и старые записи</td></tr>
+</tbody></table></div>
+<h2>Что ещё не реализовано</h2>
+<p>Нельзя считать текущую архитектуру полноценным медицинским продуктом. Открыты независимая валидация/калибровка, медицинское согласование текстов, сроки актуальности анализов, детальный выбор источников повторных измерений, распознавание сканов на Windows, авторизация, удаление записей и ограничение памяти worker. Внешние данные не включены в обучение baseline_v1; NHANES использован отдельно для v4. Старые отчёты и старые аналитические предложения в контексте не доказывают реализацию соответствующей функции.</p>
+<h2>Полный реестр файлов</h2>
+<p>Следующая таблица формируется из содержимого передачи. Размеры и SHA-256 находятся в <code>FILES_MANIFEST.json</code>. Машинные окружения, личная рабочая база и кэши намеренно исключены. Руководства HTML являются копиями Markdown; реестр не перечисляет сам себя повторно при каждом преобразовании.</p>
+<h2>Публичный состав MedITron</h2>
+<p>Внутренний контекст и исходные материалы кейса не опубликованы. Рабочий алгоритм и ограничения — docs/10_HYBRID_MODEL.md и RELEASE_NOTES.md. Реестр ниже относится к публичной копии; машинные проверки и манифест описываются отдельно.</p>
+<p>&lt;!-- generated inventory --&gt;</p>
+<div class="table"><table><thead><tr><th>Путь</th><th>Назначение</th></tr></thead><tbody>
+<tr><td><code>.gitignore</code></td><td>Исключения VCS; архив собирается независимо от Git ignore.</td></tr>
+<tr><td><code>EXTERNAL_DATASETS.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>FEATURE_UNITS.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>KILICARSLAN_ANALYSIS.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>MODEL_PUBLICATION.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>README.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>RELEASE_NOTES.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>START_MAC.command</code></td><td>Удобная точка запуска на macOS через Python 3.12.</td></tr>
+<tr><td><code>START_WINDOWS.bat</code></td><td>Удобная точка запуска на Windows через launcher py 3.12.</td></tr>
+<tr><td><code>THIRD_PARTY_NOTICES.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>backend/AUTH.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>backend/INTEGRATIONS.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>backend/README.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>backend/RECOMMENDATIONS.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>backend/__init__.py</code></td><td>Инициализация Python-пакета backend.</td></tr>
+<tr><td><code>backend/__main__.py</code></td><td>Точка запуска Python-модуля backend.</td></tr>
+<tr><td><code>backend/accounts.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>backend/app.py</code></td><td>Сборка FastAPI, middleware, схемы запросов, маршруты и orchestration.</td></tr>
+<tr><td><code>backend/auth.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>backend/data/biochemical_model_trust.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>backend/data/model_trust.json</code></td><td>SHA-256 разрешённых локальных весов до joblib-десериализации.</td></tr>
+<tr><td><code>backend/data/recommendation_preview_examples.json</code></td><td>Примеры явного preview для фраз без реального inference.</td></tr>
+<tr><td><code>backend/data/recommendations_doctor.json</code></td><td>20 черновых фраз врача, условия, приоритеты и sources.</td></tr>
+<tr><td><code>backend/data/recommendations_patient.json</code></td><td>20 черновых фраз пациента, условия, приоритеты и sources.</td></tr>
+<tr><td><code>backend/data/sufficiency_policy.json</code></td><td>Версия и правила минимальной панели/покрытия.</td></tr>
+<tr><td><code>backend/data_sufficiency.py</code></td><td>Проверка минимума лабораторных значений и покрытия групп.</td></tr>
+<tr><td><code>backend/features.py</code></td><td>Канонический словарь, валидация, пересчёт единиц и черновик PDF.</td></tr>
+<tr><td><code>backend/ferritin_service.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>backend/integrations.py</code></td><td>Администрирование организаций и отзываемых исследовательских ключей.</td></tr>
+<tr><td><code>backend/laboratory_api.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>backend/model_service.py</code></td><td>Проверка weights, readiness, версия и адаптер модельного отчёта.</td></tr>
+<tr><td><code>backend/parse_worker.py</code></td><td>Файловый протокол worker → lab_parser → result JSON.</td></tr>
+<tr><td><code>backend/parser_service.py</code></td><td>Отдельный worker PDF, timeout и завершение процессов на двух ОС.</td></tr>
+<tr><td><code>backend/privacy.py</code></td><td>Исследовательские сеансы, минимизация, очистка и лимиты API.</td></tr>
+<tr><td><code>backend/privacy_admin.py</code></td><td>Отдельная проверка/подтверждённое удаление исторических копий.</td></tr>
+<tr><td><code>backend/recommendations.py</code></td><td>Валидация и детерминированный выбор версионированных фраз.</td></tr>
+<tr><td><code>backend/report_files.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>backend/screening.py</code></td><td>Входы и отдельное правило Hb; во frontend также CSV.</td></tr>
+<tr><td><code>backend/store.py</code></td><td>Ограниченная SQLite :memory:, TTL, PDF BLOB, ревизии и каскадное удаление.</td></tr>
+<tr><td><code>backend/verdicts.py</code></td><td>Строгая схема вердикта и согласованность класса, Hb и бинарных решений.</td></tr>
+<tr><td><code>backend/worker_limits.py</code></td><td>Ограничения ресурсов worker для POSIX/Windows.</td></tr>
+<tr><td><code>data/external/README.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>data/external/processed/kilicarslan/README.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>data/external/processed/nhanes_case_units_v1/README.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>data/external/unit_mapping.json</code></td><td>Технический справочник пересчёта единиц внешних исследований; без записей пациентов.</td></tr>
+<tr><td><code>data/feature_dictionary.json</code></td><td>48 исходных столбцов, 37 входов, единицы, роли и хеши.</td></tr>
+<tr><td><code>data/reference/variables.xlsx</code></td><td>Предоставленный канонический словарь столбцов и единиц.</td></tr>
+<tr><td><code>docs/00_START_HERE.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/01_PROJECT_STRUCTURE.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/02_MODEL.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/03_BACKEND.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/04_FRONTEND.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/05_RECOMMENDATIONS.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/06_LOCAL_SETUP.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/07_VERIFICATION.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/08_SECURITY_LEGAL_AUDIT_RU.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/09_SECURITY_REMEDIATION.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/10_HYBRID_MODEL.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/11_LABORATORY_API.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/INDEPENDENT_VALIDATION.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/JURY_GUIDE.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/clinical_validation_template.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>docs/legal/HEALTH_DATA_CONSENT_TEMPLATE.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/legal/MEDICAL_RELEASE_GATE.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/legal/OPERATOR_ROLES.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/legal/PRIVACY_POLICY_TEMPLATE.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/legal/PROCESSING_AGREEMENT_TEMPLATE.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/legal/README.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/legal/RESEARCH_TERMS.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/legal/RETENTION_REQUESTS_INCIDENTS.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>docs/media/hema_doctor_demo.gif</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>docs/media/hema_patient_demo.gif</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>docs/research_gate_verification.jpg</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>docs/research_modal_mobile_verification.jpg</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>docs/research_modal_verification.jpg</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>docs/security_audit_probe.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>docs/security_dependency_audit.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>docs/security_dependency_inventory.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>docs/security_runtime_requirements.txt</code></td><td>Текстовое пояснение, промпт или извлечённый текст PDF.</td></tr>
+<tr><td><code>docs/security_verification.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>examples/biochemical_v4_input.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>examples/full-demo/README.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>examples/full-demo/input_panels.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>examples/full-demo/reports.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>examples/laboratory_api/sample-pdf-reports.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>examples/laboratory_api/sample-reports.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>examples/laboratory_api/structured_request.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>examples/synthetic_panel.csv</code></td><td>Одна синтетическая строка для проверки реального API.</td></tr>
+<tr><td><code>experiments/backend_hybrid_v1_v4/REPORT.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>experiments/backend_hybrid_v1_v4/verification.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/baseline_v1/REPORT.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>experiments/baseline_v1/development_comparison.png</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>experiments/baseline_v1/holdout_confusion.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/baseline_v1/holdout_confusion.png</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>experiments/baseline_v1/holdout_missingness.png</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>experiments/baseline_v1/holdout_reliability.png</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>experiments/baseline_v1/manifest.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/baseline_v1/metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/baseline_v1/mixed_metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/baseline_v1/models/selected.joblib</code></td><td>Готовый комплект выбранных primary/CBC классификаторов.</td></tr>
+<tr><td><code>experiments/baseline_v1/per_class.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/baseline_v1/selection.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/baseline_v1/selection_scores.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/baseline_v1/subgroups.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/baseline_v1/timings.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/REPORT.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>experiments/biochemical_v4/artifact_hashes.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/biochemical_v4/development_metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/external_gates.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/biochemical_v4/external_metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/external_subgroups.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/fold_metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/models/selected.joblib</code></td><td>Готовый комплект выбранных primary/CBC классификаторов.</td></tr>
+<tr><td><code>experiments/biochemical_v4/protocol.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/biochemical_v4/protocol.sha256</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/release_decision.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/biochemical_v4/runtime_manifest.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/biochemical_v4/runtime_source_snapshot/backend/data/biochemical_model_trust.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/biochemical_v4/runtime_source_snapshot/examples/biochemical_v4_input.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/biochemical_v4/runtime_source_snapshot/ml_baselines/biochemical_predict.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/runtime_source_snapshot/ml_baselines/biochemical_report.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/runtime_source_snapshot/tests/test_biochemical_v4.py</code></td><td>Автоматические проверки biochemical_v4.</td></tr>
+<tr><td><code>experiments/biochemical_v4/selection.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/biochemical_v4/selection_lock.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/biochemical_v4/sensitivity.png</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>experiments/biochemical_v4/source_snapshot/ml_baselines/advanced.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/source_snapshot/ml_baselines/biochemical.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/source_snapshot/ml_baselines/calibration.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/source_snapshot/ml_baselines/core.py</code></td><td>Схема ML, encode, NaN, preprocessing, модели и сценарии пропусков.</td></tr>
+<tr><td><code>experiments/biochemical_v4/source_snapshot/ml_baselines/external_validate.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/source_snapshot/ml_baselines/nhanes_v4.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/source_snapshot/ml_baselines/train_biochemical.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/source_snapshot/scripts/fetch_nhanes_v4.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/source_snapshot/scripts/prepare_nhanes.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/biochemical_v4/test_cohort_manifest.json</code></td><td>Автоматические проверки cohort_manifest.json.</td></tr>
+<tr><td><code>experiments/biochemical_v4/verification.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/calibrated_v3/REPORT.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>experiments/calibrated_v3/artifact_hashes.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/calibrated_v3/calibration_selection.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/calibrated_v3/comparison.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/deployment_metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/development_metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/external_metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/external_selection.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/calibrated_v3/fold_metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/manifest.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/calibrated_v3/metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/models/selected.joblib</code></td><td>Готовый комплект выбранных primary/CBC классификаторов.</td></tr>
+<tr><td><code>experiments/calibrated_v3/release_decision.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/calibrated_v3/reliability.png</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>experiments/calibrated_v3/reliability_bins.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/runtime_manifest.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/calibrated_v3/runtime_source_snapshot/backend/app.py</code></td><td>Сборка FastAPI, middleware, схемы запросов, маршруты и orchestration.</td></tr>
+<tr><td><code>experiments/calibrated_v3/runtime_source_snapshot/backend/data/model_trust.json</code></td><td>SHA-256 разрешённых локальных весов до joblib-десериализации.</td></tr>
+<tr><td><code>experiments/calibrated_v3/runtime_source_snapshot/backend/data_sufficiency.py</code></td><td>Проверка минимума лабораторных значений и покрытия групп.</td></tr>
+<tr><td><code>experiments/calibrated_v3/runtime_source_snapshot/backend/model_service.py</code></td><td>Проверка weights, readiness, версия и адаптер модельного отчёта.</td></tr>
+<tr><td><code>experiments/calibrated_v3/runtime_source_snapshot/backend/screening.py</code></td><td>Входы и отдельное правило Hb; во frontend также CSV.</td></tr>
+<tr><td><code>experiments/calibrated_v3/runtime_source_snapshot/backend/verdicts.py</code></td><td>Строгая схема вердикта и согласованность класса, Hb и бинарных решений.</td></tr>
+<tr><td><code>experiments/calibrated_v3/runtime_source_snapshot/ml_baselines/calibration.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/runtime_source_snapshot/ml_baselines/calibration_report.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/runtime_source_snapshot/ml_baselines/predict.py</code></td><td>Исследовательский inference по выбранным CBC/primary weights.</td></tr>
+<tr><td><code>experiments/calibrated_v3/runtime_source_snapshot/scripts/prepare_nhanes.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/runtime_source_snapshot/tests/test_calibration.py</code></td><td>Автоматические проверки calibration.</td></tr>
+<tr><td><code>experiments/calibrated_v3/source_snapshot/__init__.py</code></td><td>Инициализация Python-пакета source_snapshot.</td></tr>
+<tr><td><code>experiments/calibrated_v3/source_snapshot/advanced.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/source_snapshot/calibrate.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/source_snapshot/calibration.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/source_snapshot/core.py</code></td><td>Схема ML, encode, NaN, preprocessing, модели и сценарии пропусков.</td></tr>
+<tr><td><code>experiments/calibrated_v3/source_snapshot/improve.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/source_snapshot/improvement_report.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/source_snapshot/predict.py</code></td><td>Исследовательский inference по выбранным CBC/primary weights.</td></tr>
+<tr><td><code>experiments/calibrated_v3/source_snapshot/report.py</code></td><td>Графики и подробный отчёт эксперимента.</td></tr>
+<tr><td><code>experiments/calibrated_v3/source_snapshot/train.py</code></td><td>Общие splits/CV, выбор по OOF, development fit, holdout и артефакты.</td></tr>
+<tr><td><code>experiments/calibrated_v3/verification.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/external_validation_v1/REPORT.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>experiments/external_validation_v1/artifact_hashes.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/external_validation_v1/cohort_manifest.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/external_validation_v1/distribution_shift.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/external_validation_v1/external_quality.png</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>experiments/external_validation_v1/metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/external_validation_v1/protocol.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/external_validation_v1/protocol.sha256</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/external_validation_v1/release_decision.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/external_validation_v1/report_verification_snapshot/ml_baselines/external_validation_report.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/external_validation_v1/report_verification_snapshot/tests/test_external_validation.py</code></td><td>Автоматические проверки external_validation.</td></tr>
+<tr><td><code>experiments/external_validation_v1/source_snapshot/ml_baselines/advanced.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/external_validation_v1/source_snapshot/ml_baselines/calibration.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/external_validation_v1/source_snapshot/ml_baselines/core.py</code></td><td>Схема ML, encode, NaN, preprocessing, модели и сценарии пропусков.</td></tr>
+<tr><td><code>experiments/external_validation_v1/source_snapshot/ml_baselines/external_validate.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/external_validation_v1/source_snapshot/scripts/fetch_nhanes_validation.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/external_validation_v1/source_snapshot/scripts/prepare_nhanes.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/external_validation_v1/subgroup_metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/external_validation_v1/verification.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/robust_v2/REPORT.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>experiments/robust_v2/api_policy_metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/robust_v2/artifact_hashes.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/robust_v2/comparison.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/robust_v2/development_metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/robust_v2/manifest.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/robust_v2/metrics.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/robust_v2/missingness_comparison.png</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>experiments/robust_v2/models/selected.joblib</code></td><td>Готовый комплект выбранных primary/CBC классификаторов.</td></tr>
+<tr><td><code>experiments/robust_v2/per_class.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/robust_v2/release_decision.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/robust_v2/release_policy.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/robust_v2/selection.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>experiments/robust_v2/source_snapshot/__init__.py</code></td><td>Инициализация Python-пакета source_snapshot.</td></tr>
+<tr><td><code>experiments/robust_v2/source_snapshot/advanced.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/robust_v2/source_snapshot/core.py</code></td><td>Схема ML, encode, NaN, preprocessing, модели и сценарии пропусков.</td></tr>
+<tr><td><code>experiments/robust_v2/source_snapshot/improve.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/robust_v2/source_snapshot/improvement_report.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>experiments/robust_v2/source_snapshot/predict.py</code></td><td>Исследовательский inference по выбранным CBC/primary weights.</td></tr>
+<tr><td><code>experiments/robust_v2/source_snapshot/report.py</code></td><td>Графики и подробный отчёт эксперимента.</td></tr>
+<tr><td><code>experiments/robust_v2/source_snapshot/train.py</code></td><td>Общие splits/CV, выбор по OOF, development fit, holdout и артефакты.</td></tr>
+<tr><td><code>frontend/API_CONTRACT.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>frontend/README.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>frontend/assets/report-preview.html</code></td><td>HTML-страница, отчёт или браузерная проверка.</td></tr>
+<tr><td><code>frontend/doctor.html</code></td><td>HTML-страница, отчёт или браузерная проверка.</td></tr>
+<tr><td><code>frontend/favicon.svg</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>frontend/index.html</code></td><td>HTML-страница, отчёт или браузерная проверка.</td></tr>
+<tr><td><code>frontend/package.json</code></td><td>ES modules, Node &gt;=20 и scripts dev/build/test.</td></tr>
+<tr><td><code>frontend/patient.html</code></td><td>HTML-страница, отчёт или браузерная проверка.</td></tr>
+<tr><td><code>frontend/scripts/build.mjs</code></td><td>Копирование страниц/ресурсов в dist без bundler.</td></tr>
+<tr><td><code>frontend/scripts/check-pdf.mjs</code></td><td>Создание образцов PDF-отчётов для визуальной проверки.</td></tr>
+<tr><td><code>frontend/scripts/serve.mjs</code></td><td>Локальный dev HTTP-сервер фронтенда на 5173.</td></tr>
+<tr><td><code>frontend/src/api.js</code></td><td>HTTP-клиент, API ошибки, проверка ответа и ревизии наблюдений.</td></tr>
+<tr><td><code>frontend/src/app.js</code></td><td>Состояние страниц, DOM, форма, файлы, результат и взаимодействия.</td></tr>
+<tr><td><code>frontend/src/assets/fonts/IBMPlexMono-Regular.ttf</code></td><td>Локальный шрифт IBM Plex для UI/PDF, лицензия рядом.</td></tr>
+<tr><td><code>frontend/src/assets/fonts/IBMPlexSans-Regular.ttf</code></td><td>Локальный шрифт IBM Plex для UI/PDF, лицензия рядом.</td></tr>
+<tr><td><code>frontend/src/assets/fonts/LICENSE.txt</code></td><td>Лицензия локально включённой зависимости/шрифта; сохранять при передаче.</td></tr>
+<tr><td><code>frontend/src/assets/hero-blood-flow-v2.png</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>frontend/src/assets/hero-blood-flow-v2.prompt.txt</code></td><td>Текстовое пояснение, промпт или извлечённый текст PDF.</td></tr>
+<tr><td><code>frontend/src/assets/hero-blood-v1.png</code></td><td>Визуальный ресурс интерфейса/проверок.</td></tr>
+<tr><td><code>frontend/src/assets/hero-blood-v1.prompt.txt</code></td><td>Текстовое пояснение, промпт или извлечённый текст PDF.</td></tr>
+<tr><td><code>frontend/src/auth.js</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>frontend/src/config.js</code></td><td>Режим api/local и адрес API на серверном/dev порту.</td></tr>
+<tr><td><code>frontend/src/data.js</code></td><td>35 лабораторных полей и группы интерфейса.</td></tr>
+<tr><td><code>frontend/src/demo-scenarios.js</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>frontend/src/demo.js</code></td><td>Заранее подготовленный демонстрационный отчёт, не inference.</td></tr>
+<tr><td><code>frontend/src/export.js</code></td><td>Печать, JSON/blob-скачивание, экранирование и HTML-утилита.</td></tr>
+<tr><td><code>frontend/src/ferritin.js</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>frontend/src/information.js</code></td><td>Диалоги о проекте, приватности и обработке.</td></tr>
+<tr><td><code>frontend/src/pages.css</code></td><td>Стили интерфейса, responsive и/или print.</td></tr>
+<tr><td><code>frontend/src/pdf-report.js</code></td><td>Создание PDF с кириллицей, шрифтами, переносами и страницами.</td></tr>
+<tr><td><code>frontend/src/privacy.js</code></td><td>Явное подтверждение исследовательского режима до импорта/расчёта.</td></tr>
+<tr><td><code>frontend/src/recommendation-details.js</code></td><td>Отображение выводов и полноты отдельно от следующих шагов.</td></tr>
+<tr><td><code>frontend/src/report-details.js</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>frontend/src/screening.js</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>frontend/src/styles.css</code></td><td>Стили интерфейса, responsive и/или print.</td></tr>
+<tr><td><code>frontend/src/units.js</code></td><td>Канонические единицы для интерфейса.</td></tr>
+<tr><td><code>frontend/src/vendor/JSZIP-LICENSE.md</code></td><td>Лицензия локально включённой зависимости/шрифта; сохранять при передаче.</td></tr>
+<tr><td><code>frontend/src/vendor/fontkit-LICENSE.txt</code></td><td>Лицензия локально включённой зависимости/шрифта; сохранять при передаче.</td></tr>
+<tr><td><code>frontend/src/vendor/fontkit-README.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>frontend/src/vendor/fontkit.min.js</code></td><td>Локальная JavaScript-зависимость; лицензия в том же каталоге.</td></tr>
+<tr><td><code>frontend/src/vendor/jszip.min.js</code></td><td>Локальная JavaScript-зависимость; лицензия в том же каталоге.</td></tr>
+<tr><td><code>frontend/src/vendor/pdf-lib-LICENSE.md</code></td><td>Лицензия локально включённой зависимости/шрифта; сохранять при передаче.</td></tr>
+<tr><td><code>frontend/src/vendor/pdf-lib.min.js</code></td><td>Локальная JavaScript-зависимость; лицензия в том же каталоге.</td></tr>
+<tr><td><code>frontend/src/xlsx.js</code></td><td>ZIP/XML XLSX, первый видимый лист, кэш формул и лимиты.</td></tr>
+<tr><td><code>frontend/tests/api.test.mjs</code></td><td>Автоматические проверки api.</td></tr>
+<tr><td><code>frontend/tests/auth.test.mjs</code></td><td>Автоматические проверки auth.</td></tr>
+<tr><td><code>frontend/tests/backend.test.mjs</code></td><td>Автоматические проверки backend.</td></tr>
+<tr><td><code>frontend/tests/demo.test.mjs</code></td><td>Автоматические проверки demo.</td></tr>
+<tr><td><code>frontend/tests/ferritin.test.mjs</code></td><td>Автоматические проверки ferritin.</td></tr>
+<tr><td><code>frontend/tests/pdf.test.mjs</code></td><td>Автоматические проверки pdf.</td></tr>
+<tr><td><code>frontend/tests/privacy.test.mjs</code></td><td>Автоматические проверки privacy.</td></tr>
+<tr><td><code>frontend/tests/recommendations.test.mjs</code></td><td>Автоматические проверки recommendations.</td></tr>
+<tr><td><code>frontend/tests/screening.test.mjs</code></td><td>Автоматические проверки screening.</td></tr>
+<tr><td><code>frontend/tests/xlsx.html</code></td><td>HTML-страница, отчёт или браузерная проверка.</td></tr>
+<tr><td><code>lab_parser/__init__.py</code></td><td>Инициализация Python-пакета lab_parser.</td></tr>
+<tr><td><code>lab_parser/__main__.py</code></td><td>Точка запуска Python-модуля lab_parser.</td></tr>
+<tr><td><code>lab_parser/catalog.py</code></td><td>Нормализация имен/единиц и загрузка словаря aliases.</td></tr>
+<tr><td><code>lab_parser/cli.py</code></td><td>Аргументы и коды завершения CLI парсера.</td></tr>
+<tr><td><code>lab_parser/data/analytes.json</code></td><td>Версионированные aliases 35 лабораторных показателей.</td></tr>
+<tr><td><code>lab_parser/extraction.py</code></td><td>Текст/таблицы pdfplumber и локальный Apple Vision OCR.</td></tr>
+<tr><td><code>lab_parser/macos_ocr.swift</code></td><td>Swift-мост к Apple Vision для локального OCR страниц.</td></tr>
+<tr><td><code>lab_parser/models.py</code></td><td>Dataclass-структуры PDF-документов, страниц, измерений, наблюдения.</td></tr>
+<tr><td><code>lab_parser/parsing.py</code></td><td>Лабораторные строки, числа, comparator, единицы, даты и материал.</td></tr>
+<tr><td><code>lab_parser/pipeline.py</code></td><td>Пакет PDF как одно наблюдение, контроль повторов и issues.</td></tr>
+<tr><td><code>ml_baselines/README.md</code></td><td>Пояснение компонента, аналитический отчёт или лицензия.</td></tr>
+<tr><td><code>ml_baselines/__init__.py</code></td><td>Инициализация Python-пакета ml_baselines.</td></tr>
+<tr><td><code>ml_baselines/advanced.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>ml_baselines/biochemical.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>ml_baselines/biochemical_predict.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>ml_baselines/biochemical_report.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>ml_baselines/calibrate.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>ml_baselines/calibration.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>ml_baselines/calibration_report.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>ml_baselines/core.py</code></td><td>Схема ML, encode, NaN, preprocessing, модели и сценарии пропусков.</td></tr>
+<tr><td><code>ml_baselines/external_validate.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>ml_baselines/external_validation_report.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>ml_baselines/improve.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>ml_baselines/improvement_report.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>ml_baselines/nhanes_v4.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>ml_baselines/predict.py</code></td><td>Исследовательский inference по выбранным CBC/primary weights.</td></tr>
+<tr><td><code>ml_baselines/report.py</code></td><td>Графики и подробный отчёт эксперимента.</td></tr>
+<tr><td><code>ml_baselines/requirements.txt</code></td><td>Текстовое пояснение, промпт или извлечённый текст PDF.</td></tr>
+<tr><td><code>ml_baselines/train.py</code></td><td>Общие splits/CV, выбор по OOF, development fit, holdout и артефакты.</td></tr>
+<tr><td><code>ml_baselines/train_biochemical.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>output/pdf/full-examples/B12-patient.pdf</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>output/pdf/full-examples/iron-doctor.pdf</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>output/pdf/test_uploads/01_cbc.pdf</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>output/pdf/test_uploads/02_iron.pdf</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>output/pdf/test_uploads/03_units_bounds_repeat.pdf</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>output/pdf/test_uploads/04_manual.csv</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>output/pdf/test_uploads/README.txt</code></td><td>Текстовое пояснение, промпт или извлечённый текст PDF.</td></tr>
+<tr><td><code>output/pdf/test_uploads/expected_results.json</code></td><td>Структурированные метаданные/результат; контекст в пояснениях каталога.</td></tr>
+<tr><td><code>pyproject.toml</code></td><td>Установка Python, закреплённые extras, CLI и package data.</td></tr>
+<tr><td><code>requirements-runtime.txt</code></td><td>Снимок закреплённых и проверенных Python-зависимостей.</td></tr>
+<tr><td><code>scripts/audit_external_datasets.py</code></td><td>Аудит загруженных внешних наборов и источников.</td></tr>
+<tr><td><code>scripts/audit_feature_units.py</code></td><td>Сопоставление единиц признаков и источников.</td></tr>
+<tr><td><code>scripts/build_cursor_gifs.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>scripts/build_demo_scenarios.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>scripts/build_organizer_archive.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>scripts/build_presentation_gifs.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>scripts/bundle_project.py</code></td><td>Повторная сборка ZIP, документации HTML и манифеста.</td></tr>
+<tr><td><code>scripts/fetch_nhanes_v4.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>scripts/fetch_nhanes_validation.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>scripts/laboratory_client.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>scripts/launch_local.py</code></td><td>Первоначальная установка .venv, проверка weights и запуск сервера.</td></tr>
+<tr><td><code>scripts/prepare_kilicarslan.py</code></td><td>Проверка/подготовка производных Kılıçarslan без изменения original.</td></tr>
+<tr><td><code>scripts/prepare_nhanes.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>scripts/prepare_public_release.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>scripts/verify_handoff.py</code></td><td>Проверка распакованного ZIP: хеши, реальные модели, PDF и изоляция доступа.</td></tr>
+<tr><td><code>scripts/verify_hybrid.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>tests/auth_helpers.py</code></td><td>Ресурс проекта; назначение описано в руководстве родительского компонента.</td></tr>
+<tr><td><code>tests/test_auth.py</code></td><td>Автоматические проверки auth.</td></tr>
+<tr><td><code>tests/test_backend.py</code></td><td>Автоматические проверки backend.</td></tr>
+<tr><td><code>tests/test_biochemical_v4.py</code></td><td>Автоматические проверки biochemical_v4.</td></tr>
+<tr><td><code>tests/test_calibration.py</code></td><td>Автоматические проверки calibration.</td></tr>
+<tr><td><code>tests/test_candidate_model.py</code></td><td>Автоматические проверки candidate_model.</td></tr>
+<tr><td><code>tests/test_demo_scenarios.py</code></td><td>Автоматические проверки demo_scenarios.</td></tr>
+<tr><td><code>tests/test_external_validation.py</code></td><td>Автоматические проверки external_validation.</td></tr>
+<tr><td><code>tests/test_ferritin_backend.py</code></td><td>Автоматические проверки ferritin_backend.</td></tr>
+<tr><td><code>tests/test_laboratory_api.py</code></td><td>Автоматические проверки laboratory_api.</td></tr>
+<tr><td><code>tests/test_laboratory_client.py</code></td><td>Автоматические проверки laboratory_client.</td></tr>
+<tr><td><code>tests/test_ml_baselines.py</code></td><td>Автоматические проверки ml_baselines.</td></tr>
+<tr><td><code>tests/test_ml_improvements.py</code></td><td>Автоматические проверки ml_improvements.</td></tr>
+<tr><td><code>tests/test_model_api.py</code></td><td>Автоматические проверки model_api.</td></tr>
+<tr><td><code>tests/test_parser.py</code></td><td>Автоматические проверки parser.</td></tr>
+<tr><td><code>tests/test_parser_worker.py</code></td><td>Автоматические проверки parser_worker.</td></tr>
+<tr><td><code>tests/test_recommendations.py</code></td><td>Автоматические проверки recommendations.</td></tr>
+<tr><td><code>tests/test_security.py</code></td><td>Автоматические проверки security.</td></tr>
+</tbody></table></div></main></body></html>

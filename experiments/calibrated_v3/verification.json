@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-04T23:58:24.545652+03:00",
+  "python_tests": {
+    "passed": 116,
+    "failed": 0
+  },
+  "calibration_tests": {
+    "passed": 9,
+    "failed": 0
+  },
+  "frontend_tests": {
+    "passed": 22,
+    "failed": 0
+  },
+  "live_api": {
+    "url": "http://127.0.0.1:8002",
+    "state": "ready",
+    "modelVersion": "hema-calibrated-v3-2e16ec3c201c",
+    "calibrationStatus": "partial",
+    "scoreMeaning": "partially_calibrated_research_score",
+    "synthetic_request_passed": true
+  },
+  "raw_oof_max_difference_vs_v1": 3.3306690738754696e-16,
+  "binary_exact_threshold_ties_in_oof": 0,
+  "source_case_sha256": "9d97e125c961a92222eb31c86188ba7a7736ece1ba59ce296d32e300b107dbb6",
+  "clinical_validation": false
+}

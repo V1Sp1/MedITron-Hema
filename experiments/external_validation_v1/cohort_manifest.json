@@ -1,0 +1,32 @@
+{
+  "source_rows": 10348,
+  "adults": 5563,
+  "known_pregnancy_adults_excluded": 365,
+  "unknown_pregnancy_women_18_44_excluded": 111,
+  "eligible_before_duplicates": 5087,
+  "case_exact_complete_cbc_matches": 0,
+  "duplicates_excluded": 0,
+  "final_rows": 5087,
+  "normalization_entries": 24,
+  "source_sha256": {
+    "data/external/raw/nhanes_2005_2006/DEMO_D.xpt": "bf9cc79cce501b2fbe5aa8d5b403b618548d02d4aefeb528335cdd9f4c40a3af",
+    "data/external/raw/nhanes_2005_2006/CBC_D.xpt": "06c68d5d40146dd606ffeb038dee1295f9a9f63009033bd78a14e0636717aad7",
+    "data/external/raw/nhanes_2005_2006/BIOPRO_D.xpt": "6de916025812b78db1b81e62f77d94d83ed8b046d9d5c8a9d584f7caec120310",
+    "data/external/raw/nhanes_2005_2006/FERTIN_D.xpt": "dffa06c8c096f5a1f8c7227574a900762153a8491ace4973e6af8c6c8447a2e3",
+    "data/external/raw/nhanes_2005_2006/TFR_D.xpt": "ccd19d2a3966b0179e9b3e2a984ee93cb1fa94c411cbafdbb07e7b5d2333972a",
+    "data/external/raw/nhanes_2005_2006/FETIB_D.xpt": "8de4fa26d39763c893cd89ac6a6c1db8cdaf43ea96c5bb4e596e9ec3e1df5c2b",
+    "data/external/raw/nhanes_2005_2006/B12_D.xpt": "6dcc58cf6dc5bece78e8464dc146b072bd23c877987349942ce3a5aff8d0f305",
+    "data/external/raw/nhanes_2005_2006/FOLATE_D.xpt": "b213c41ef7f74fc8898b1f592eb5754e745a809ed5e63440f0f6df2f41d65e50",
+    "data/external/raw/nhanes_2005_2006/HCY_D.xpt": "28b5d9f62aa15f8ce7ae81ab3e7731a41970ef36faf8eb06fff6fb218648cfdd",
+    "data/external/raw/nhanes_2005_2006/VIT_B6_D.xpt": "94758ae73e88ec1ff86a3d095025d748c95864df7200cf29a8cb96dc092df318",
+    "data/external/raw/nhanes_2005_2006/CRP_D.xpt": "4afe7cc036d3268601dc77ba1d3d9b85bbec80c2bc0670ec554550001aa0498b"
+  },
+  "biochemical_positive_counts": {
+    "low_ferritin": 196,
+    "low_B12": 130,
+    "low_folate": 2,
+    "low_PLP": 625
+  },
+  "clinical_known_cells": 0,
+  "identity_limit": "Distinct public survey source; no common patient registry. Exact CBC fingerprint audit cannot establish identity."
+}

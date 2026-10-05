@@ -1,0 +1,16 @@
+{
+  "runtime_code_sha256": {
+    "ml_baselines/calibration.py": "3800e6d6395a26222485fba30e6bfec3fdd562a067667db80f538988b1561245",
+    "ml_baselines/predict.py": "02526596b3a1f530bf466881559a907955972555bb2468f9f0d723557a493e8d",
+    "ml_baselines/calibration_report.py": "d3e14a6e352380d010fbe71e96b500515d7a9fffb6660443821e43fb508ce355",
+    "backend/model_service.py": "62e2c3666fa78fec6b31f7b0c2dc189f403a5e043cb5567867742ab2f771ef46",
+    "backend/screening.py": "7dfffdf8663ebbfc2db5b5bf2e2807d99e859e0a6a21167edb7aa92b02590df3",
+    "backend/data_sufficiency.py": "bb1d79973626e8cf1d5c7d8dffe8dd6a665da075057e42ebbb1abe4cdd9642e8",
+    "backend/verdicts.py": "4bd65aec70418641d0d178dcde67c1f009a7126719e4eb8ebb8f529cdebad098",
+    "backend/app.py": "1321befa09f9e0844c3159a11cd1c6c0055774b6b041551d2f7bfa865213f646",
+    "backend/data/model_trust.json": "6758c3428ba4e23da36dd774bac4eafa128f57e963cd9bcb0571551189ca355b",
+    "scripts/prepare_nhanes.py": "bb1b08ac55745da0ee1d75d80cf201f9cd8c4e54d542be9e7a232ce50688ec4b",
+    "tests/test_calibration.py": "c7d85ab38e2cb8bf3725e379191902aa97d14d2921741f99b8417f3864da1dd5"
+  },
+  "note": "Training code is frozen separately in source_snapshot; runtime adds saved-calibrator support and current API policy replay."
+}

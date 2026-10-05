@@ -1,0 +1,12 @@
+{
+  "default_model": "baseline_v1",
+  "default_sha256": "b413ce1e45d678f64dd03e3430630e09887b9a89303c534807f6cc78db1e19ef",
+  "weights_changed": false,
+  "threshold_changed": false,
+  "external_biochemical_benchmark_completed": true,
+  "clinicalValidated": false,
+  "independentClinicalValidation": false,
+  "etiology_classes_independently_validated": 0,
+  "reason": "No promotion, retraining, recalibration or threshold tuning from biochemical proxies. Clinical validation of 12 etiologies remains required.",
+  "protocol_sha256": "9c739d0b54d3dac829868c583439561148db8f4fbaa16ba7351e87a2b877af42"
+}

@@ -1,0 +1,197 @@
+{
+  "experiment_version": "0.1.0",
+  "started_at": "2026-10-03T18:30:59.405428+03:00",
+  "source_path": "data/case/deficiency_anemia.csv",
+  "source_sha256": "9d97e125c961a92222eb31c86188ba7a7736ece1ba59ce296d32e300b107dbb6",
+  "dictionary_sha256": "3d01da624a1b0ea5c205a11b4fed8222327cc4b9206185f1125e263c93be03b8",
+  "n": 840,
+  "development_n": 672,
+  "holdout_n": 168,
+  "seed": 20261003,
+  "folds": 5,
+  "features": [
+    "age_years",
+    "sex",
+    "hemoglobin",
+    "RBC",
+    "hematocrit",
+    "MCV",
+    "MCH",
+    "MCHC",
+    "RDW",
+    "platelets",
+    "WBC",
+    "reticulocytes",
+    "ferritin",
+    "serum_iron",
+    "transferrin",
+    "TIBC",
+    "UIBC",
+    "TSAT",
+    "sTfR",
+    "Ret_He",
+    "vitamin_B12",
+    "active_B12",
+    "MMA",
+    "homocysteine",
+    "folate",
+    "vitamin_B6",
+    "copper",
+    "ceruloplasmin",
+    "CRP",
+    "ESR",
+    "creatinine",
+    "eGFR",
+    "TSH",
+    "albumin",
+    "LDH",
+    "indirect_bilirubin",
+    "haptoglobin"
+  ],
+  "targets": [
+    "anemia_class",
+    "iron_deficiency",
+    "B12_deficiency",
+    "folate_deficiency",
+    "B6_deficiency",
+    "copper_deficiency",
+    "inflammation_anemia"
+  ],
+  "labels": {
+    "anemia_class": [
+      "B12_deficiency_anemia",
+      "B12_deficiency_no_anemia",
+      "B6_deficiency",
+      "anemia_other",
+      "copper_deficiency",
+      "folate_deficiency_anemia",
+      "folate_deficiency_no_anemia",
+      "inflammation_anemia",
+      "iron_deficiency_anemia",
+      "latent_deficiency",
+      "mixed_deficiency",
+      "no_anemia_no_deficiency"
+    ],
+    "iron_deficiency": [
+      0,
+      1
+    ],
+    "B12_deficiency": [
+      0,
+      1
+    ],
+    "folate_deficiency": [
+      0,
+      1
+    ],
+    "B6_deficiency": [
+      0,
+      1
+    ],
+    "copper_deficiency": [
+      0,
+      1
+    ],
+    "inflammation_anemia": [
+      0,
+      1
+    ]
+  },
+  "configs": [
+    {
+      "name": "prior",
+      "algorithm": "dummy",
+      "panel": "extended"
+    },
+    {
+      "name": "logistic",
+      "algorithm": "logistic",
+      "panel": "extended"
+    },
+    {
+      "name": "logistic_values",
+      "algorithm": "logistic_values",
+      "panel": "extended"
+    },
+    {
+      "name": "extra_trees",
+      "algorithm": "extra_trees",
+      "panel": "extended"
+    },
+    {
+      "name": "catboost",
+      "algorithm": "catboost",
+      "panel": "extended"
+    },
+    {
+      "name": "catboost_dropout",
+      "algorithm": "catboost",
+      "panel": "extended",
+      "augment": true
+    },
+    {
+      "name": "logistic_cbc",
+      "algorithm": "logistic",
+      "panel": "cbc"
+    },
+    {
+      "name": "extra_trees_cbc",
+      "algorithm": "extra_trees",
+      "panel": "cbc"
+    },
+    {
+      "name": "catboost_cbc",
+      "algorithm": "catboost",
+      "panel": "cbc"
+    },
+    {
+      "name": "missingness_only",
+      "algorithm": "mask",
+      "panel": "extended"
+    }
+  ],
+  "scenarios": [
+    "available",
+    "drop30",
+    "drop60",
+    "cbc_only",
+    "hb_only",
+    "no_iron",
+    "no_B12",
+    "no_folate",
+    "no_B6",
+    "no_copper",
+    "no_hemoglobin",
+    "no_demographics"
+  ],
+  "selection_scenarios": [
+    "available",
+    "drop30",
+    "drop60"
+  ],
+  "selection_metric": "Mean F1 across available/drop30/drop60 development OOF; multiclass macro-F1",
+  "threshold": 0.5,
+  "hyperparameters": "Fixed before evaluation; no grid search, early stopping or calibration",
+  "external_training": false,
+  "cpu_threads_per_model": 4,
+  "versions": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.9.1",
+    "catboost": "1.2.10",
+    "joblib": "1.6.0",
+    "matplotlib": "3.11.2"
+  },
+  "python": "3.12.14",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "source_code_sha256": {
+    "predict.py": "6d3b0e38a0dce71c365ddfc07716acf82362e39c094d361b453e937b463a3d07",
+    "__init__.py": "9a5107d9d3e4c5c9ce64dbc9a9ce067d5a01d1540a1758db1d5f4626fef79e94",
+    "core.py": "6f76d2f0ce678351cd0f258305d54043e8daadc1f5e361a5ac0f37f1b7b07fb4",
+    "train.py": "e524eb76911fa4d59e71d66337b73787593d99b00ca52eaaad42c56efed264e4",
+    "report.py": "a840eebfaaf49bd607ed2fb027d8259ba474bb84f72305c9120b7ed715a1d34f"
+  },
+  "elapsed_seconds": 79.54624708299525,
+  "finished_at": "2026-10-03T18:32:18.974496+03:00",
+  "report_generator_sha256": "532fd2adb52950b05d247807b6b41da0d28eeb0cb8f982507efcf62abe2337fb"
+}

@@ -1,0 +1,68 @@
+{
+  "promote_default": false,
+  "checks": [
+    {
+      "check": "development_primary_gain",
+      "delta": 0.018984443016791135,
+      "minimum": 0.01,
+      "passed": true
+    },
+    {
+      "check": "mean_deficit_available",
+      "delta": 0.02429474847327864,
+      "minimum": -0.03,
+      "passed": true
+    },
+    {
+      "check": "mean_deficit_drop30",
+      "delta": -0.02255471354929816,
+      "minimum": -0.03,
+      "passed": true
+    },
+    {
+      "check": "mean_deficit_drop60",
+      "delta": -0.01372405372405372,
+      "minimum": -0.03,
+      "passed": true
+    },
+    {
+      "check": "mean_deficit_cbc_only",
+      "delta": -0.05,
+      "minimum": -0.03,
+      "passed": false
+    },
+    {
+      "check": "class_available",
+      "delta": -0.0383462481130582,
+      "minimum": -0.03,
+      "passed": false
+    },
+    {
+      "check": "class_drop30",
+      "delta": 0.0140261230424489,
+      "minimum": -0.03,
+      "passed": true
+    },
+    {
+      "check": "class_drop60",
+      "delta": 0.1322942997643915,
+      "minimum": -0.03,
+      "passed": true
+    },
+    {
+      "check": "available_api_accuracy",
+      "delta": -0.005820955439582609,
+      "minimum": -0.03,
+      "passed": true
+    },
+    {
+      "check": "available_api_coverage",
+      "delta": 0.0714285714285714,
+      "minimum": -0.01,
+      "passed": true
+    }
+  ],
+  "candidate_selection_changed": false,
+  "independent_validation": false,
+  "reason": "The frozen candidate must pass every release check; failures preserve the active baseline."
+}

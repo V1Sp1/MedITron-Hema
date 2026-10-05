@@ -1,0 +1,58 @@
+{
+  "anemia_class": {
+    "primary": "augmented_trees_hb",
+    "primary_cv_score": 0.711313172167339,
+    "primary_selection_reason": "development_gain_with_guards",
+    "cbc": "catboost_cbc",
+    "cbc_cv_score": 0.47413381353953393,
+    "cbc_selection_reason": "incumbent_retained"
+  },
+  "iron_deficiency": {
+    "primary": "augmented_trees",
+    "primary_cv_score": 0.9470833304247103,
+    "primary_selection_reason": "development_gain_with_guards",
+    "cbc": "extra_trees_cbc",
+    "cbc_cv_score": 0.7790432801822323,
+    "cbc_selection_reason": "incumbent_retained"
+  },
+  "B12_deficiency": {
+    "primary": "augmented_trees",
+    "primary_cv_score": 0.8790512090130926,
+    "primary_selection_reason": "development_gain_with_guards",
+    "cbc": "logistic_cbc",
+    "cbc_cv_score": 0.5393258426966292,
+    "cbc_selection_reason": "incumbent_retained"
+  },
+  "folate_deficiency": {
+    "primary": "catboost_dropout",
+    "primary_cv_score": 0.6583883952305004,
+    "primary_selection_reason": "incumbent_retained",
+    "cbc": "catboost_cbc",
+    "cbc_cv_score": 0.3728813559322034,
+    "cbc_selection_reason": "incumbent_retained"
+  },
+  "B6_deficiency": {
+    "primary": "catboost",
+    "primary_cv_score": 0.6571311571311571,
+    "primary_selection_reason": "incumbent_retained",
+    "cbc": "balanced_trees_cbc",
+    "cbc_cv_score": 0.23529411764705882,
+    "cbc_selection_reason": "development_gain_with_guards"
+  },
+  "copper_deficiency": {
+    "primary": "augmented_trees",
+    "primary_cv_score": 0.8057383748440659,
+    "primary_selection_reason": "development_gain_with_guards",
+    "cbc": "catboost_cbc",
+    "cbc_cv_score": 0.06666666666666667,
+    "cbc_selection_reason": "incumbent_retained"
+  },
+  "inflammation_anemia": {
+    "primary": "catboost_dropout",
+    "primary_cv_score": 0.8739847983235998,
+    "primary_selection_reason": "incumbent_retained",
+    "cbc": "balanced_catboost_cbc",
+    "cbc_cv_score": 0.5979381443298969,
+    "cbc_selection_reason": "development_gain_with_guards"
+  }
+}

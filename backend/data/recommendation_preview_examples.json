@@ -1,0 +1,51 @@
+{
+  "minimal": {
+    "audience": "patient",
+    "inputs": {
+      "sex": "F",
+      "age_years": 42,
+      "hemoglobin": 108
+    }
+  },
+  "mixed": {
+    "audience": "doctor",
+    "inputs": {
+      "sex": "F",
+      "age_years": 42,
+      "hemoglobin": 108,
+      "MCV": 82,
+      "MCH": 26.3,
+      "ferritin": 9,
+      "vitamin_B12": 300,
+      "folate": 8,
+      "CRP": 2
+    },
+    "verdict": {
+      "anemiaClass": "mixed_deficiency",
+      "deficits": [
+        "iron",
+        "B12"
+      ],
+      "status": "evaluated"
+    }
+  },
+  "uncertain": {
+    "audience": "doctor",
+    "inputs": {
+      "sex": "F",
+      "age_years": 42,
+      "hemoglobin": 108,
+      "MCV": 82,
+      "MCH": 26.3,
+      "ferritin": 9,
+      "vitamin_B12": 300,
+      "folate": 8
+    },
+    "verdict": {
+      "deficits": [
+        "B12"
+      ],
+      "status": "uncertain"
+    }
+  }
+}

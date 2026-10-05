@@ -1,0 +1,185 @@
+{
+  "low_ferritin/extended": {
+    "passed": true,
+    "checks": {
+      "positive_count": true,
+      "specificity": true,
+      "F1_gain_vs_tuned": true,
+      "paired_sensitivity_gain": true,
+      "stress_non_regression": true
+    },
+    "test": {
+      "v4": {
+        "F1": 0.6164383561643836,
+        "sensitivity": 0.6338028169014085,
+        "specificity": 0.9135446685878963,
+        "AP": 0.6701693730985369,
+        "AUROC": 0.8708672141719997
+      },
+      "v1_tuned": {
+        "F1": 0.46745562130177515,
+        "sensitivity": 0.37089201877934275,
+        "specificity": 0.9558117195004803,
+        "AP": 0.5508567127416448,
+        "AUROC": 0.8235535531472538
+      },
+      "positives": 213,
+      "paired_sensitivity_gain_95ci": [
+        0.21835604455177166,
+        0.3052978792293993
+      ]
+    }
+  },
+  "low_ferritin/cbc": {
+    "passed": true,
+    "checks": {
+      "positive_count": true,
+      "specificity": true,
+      "F1_gain_vs_tuned": true,
+      "paired_sensitivity_gain": true
+    },
+    "test": {
+      "v4": {
+        "F1": 0.5941043083900227,
+        "sensitivity": 0.6150234741784038,
+        "specificity": 0.9068203650336215,
+        "AP": 0.6298687484986274,
+        "AUROC": 0.8621675618874953
+      },
+      "v1_tuned": {
+        "F1": 0.4125,
+        "sensitivity": 0.30985915492957744,
+        "specificity": 0.9606147934678194,
+        "AP": 0.4892880495293047,
+        "AUROC": 0.7775432614901707
+      },
+      "positives": 213,
+      "paired_sensitivity_gain_95ci": [
+        0.25898188740193817,
+        0.3518619634485276
+      ]
+    }
+  },
+  "low_B12/extended": {
+    "passed": true,
+    "checks": {
+      "positive_count": true,
+      "specificity": true,
+      "F1_gain_vs_tuned": true,
+      "paired_sensitivity_gain": true,
+      "stress_non_regression": true
+    },
+    "test": {
+      "v4": {
+        "F1": 0.06349206349206349,
+        "sensitivity": 0.24761904761904763,
+        "specificity": 0.865362035225049,
+        "AP": 0.03108817506038309,
+        "AUROC": 0.589095144907278
+      },
+      "v1_tuned": {
+        "F1": 0.018648018648018648,
+        "sensitivity": 0.0380952380952381,
+        "specificity": 0.9373776908023483,
+        "AP": 0.022063121403480462,
+        "AUROC": 0.5154636101015749
+      },
+      "positives": 105,
+      "paired_sensitivity_gain_95ci": [
+        0.1681603773584906,
+        0.2525952203136669
+      ]
+    }
+  },
+  "low_B12/cbc": {
+    "passed": false,
+    "checks": {
+      "positive_count": true,
+      "specificity": true,
+      "F1_gain_vs_tuned": false,
+      "paired_sensitivity_gain": false
+    },
+    "test": {
+      "v4": {
+        "F1": 0.04081632653061224,
+        "sensitivity": 0.13333333333333333,
+        "specificity": 0.8890410958904109,
+        "AP": 0.03128517696254129,
+        "AUROC": 0.5663088248998229
+      },
+      "v1_tuned": {
+        "F1": 0.03189792663476874,
+        "sensitivity": 0.09523809523809523,
+        "specificity": 0.8998043052837573,
+        "AP": 0.026709719909345696,
+        "AUROC": 0.5254757245363899
+      },
+      "positives": 105,
+      "paired_sensitivity_gain_95ci": [
+        -0.011254262978400903,
+        0.08675794314381269
+      ]
+    }
+  },
+  "low_PLP/extended": {
+    "passed": true,
+    "checks": {
+      "positive_count": true,
+      "specificity": true,
+      "F1_gain_vs_tuned": true,
+      "paired_sensitivity_gain": true,
+      "stress_non_regression": true
+    },
+    "test": {
+      "v4": {
+        "F1": 0.33112582781456956,
+        "sensitivity": 0.33136966126656847,
+        "specificity": 0.9030470914127424,
+        "AP": 0.3216442113713722,
+        "AUROC": 0.7575795994849598
+      },
+      "v1_tuned": {
+        "F1": 0.06234413965087282,
+        "sensitivity": 0.036818851251840944,
+        "specificity": 0.9791178350735138,
+        "AP": 0.14489088393630556,
+        "AUROC": 0.5038328322161888
+      },
+      "positives": 679,
+      "paired_sensitivity_gain_95ci": [
+        0.27574252877787064,
+        0.31781322867523454
+      ]
+    }
+  },
+  "low_PLP/cbc": {
+    "passed": true,
+    "checks": {
+      "positive_count": true,
+      "specificity": true,
+      "F1_gain_vs_tuned": true,
+      "paired_sensitivity_gain": true
+    },
+    "test": {
+      "v4": {
+        "F1": 0.27556200145032633,
+        "sensitivity": 0.27982326951399117,
+        "specificity": 0.891396933560477,
+        "AP": 0.23114162530421714,
+        "AUROC": 0.6903594197298863
+      },
+      "v1_tuned": {
+        "F1": 0.0883054892601432,
+        "sensitivity": 0.054491899852724596,
+        "specificity": 0.9740204429301533,
+        "AP": 0.15299654503282722,
+        "AUROC": 0.5309112132532811
+      },
+      "positives": 679,
+      "paired_sensitivity_gain_95ci": [
+        0.20232660083584922,
+        0.2515481913919414
+      ]
+    }
+  }
+}

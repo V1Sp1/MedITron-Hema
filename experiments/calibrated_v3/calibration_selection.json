@@ -1,0 +1,86 @@
+{
+  "anemia_class": {
+    "primary": {
+      "method": "temperature",
+      "slope": 1.8545234061912819,
+      "intercept": 0.0
+    },
+    "cbc": {
+      "method": "identity",
+      "slope": 1.0,
+      "intercept": 0.0
+    }
+  },
+  "iron_deficiency": {
+    "primary": {
+      "method": "sigmoid_logit",
+      "slope": 1.461396006807668,
+      "intercept": 0.15517895593527087
+    },
+    "cbc": {
+      "method": "identity",
+      "slope": 1.0,
+      "intercept": 0.0
+    }
+  },
+  "B12_deficiency": {
+    "primary": {
+      "method": "sigmoid_logit",
+      "slope": 1.3221138409522208,
+      "intercept": 0.36062743038835526
+    },
+    "cbc": {
+      "method": "identity",
+      "slope": 1.0,
+      "intercept": 0.0
+    }
+  },
+  "folate_deficiency": {
+    "primary": {
+      "method": "identity",
+      "slope": 1.0,
+      "intercept": 0.0
+    },
+    "cbc": {
+      "method": "temperature",
+      "slope": 0.7653467906976272,
+      "intercept": 0.0
+    }
+  },
+  "B6_deficiency": {
+    "primary": {
+      "method": "sigmoid_logit",
+      "slope": 0.8242670112396151,
+      "intercept": 0.18109267206972168
+    },
+    "cbc": {
+      "method": "temperature",
+      "slope": 0.7370928113496183,
+      "intercept": 0.0
+    }
+  },
+  "copper_deficiency": {
+    "primary": {
+      "method": "sigmoid_logit",
+      "slope": 0.8288045071682723,
+      "intercept": 0.2448117544418126
+    },
+    "cbc": {
+      "method": "temperature",
+      "slope": 0.8077888786383314,
+      "intercept": 0.0
+    }
+  },
+  "inflammation_anemia": {
+    "primary": {
+      "method": "sigmoid_logit",
+      "slope": 1.1020438209805707,
+      "intercept": 0.3053758311266181
+    },
+    "cbc": {
+      "method": "temperature",
+      "slope": 0.7763303225115386,
+      "intercept": 0.0
+    }
+  }
+}

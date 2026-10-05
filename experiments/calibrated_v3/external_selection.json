@@ -1,0 +1,20 @@
+{
+  "iron_deficiency": {
+    "candidate_passes_development_guards": false,
+    "mean_f1_delta": -0.0004849344824787716,
+    "mean_brier_delta": -0.00026690621440218776,
+    "deployed": false
+  },
+  "B12_deficiency": {
+    "candidate_passes_development_guards": false,
+    "mean_f1_delta": -0.0021441086150197908,
+    "mean_brier_delta": 0.0009685710020634966,
+    "deployed": false
+  },
+  "folate_deficiency": {
+    "candidate_passes_development_guards": false,
+    "mean_f1_delta": -0.009839843164978324,
+    "mean_brier_delta": -0.0008647785588846157,
+    "deployed": false
+  }
+}

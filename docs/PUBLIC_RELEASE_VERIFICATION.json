@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "manifestFilesVerified": 365,
+  "familiesReady": {
+    "baseline_v1": "hema-baseline-v1-1dc7ef11da40",
+    "robust_v2": "hema-robust-v2-404a4bbecdb4",
+    "calibrated_v3": "hema-calibrated-v3-3a2afdacaace"
+  },
+  "biochemicalV4SyntheticInference": true,
+  "hybridBackendFerritinInference": true,
+  "checks": [
+    "research gate",
+    "real inference for both audiences",
+    "separate trusted biochemical v4 inference",
+    "hybrid backend ferritin and explicit pregnancy scope",
+    "foreign session denied",
+    "synthetic PDF through actual worker",
+    "original PDF volatile/private",
+    "delete observation",
+    "stateless organization API",
+    "API key revocation",
+    "clear session",
+    "no persistent medical database",
+    "no runtime/clinical source CSV in handoff"
+  ],
+  "limitations": [
+    "uses existing dependencies",
+    "macOS execution only",
+    "not clinical/legal certification"
+  ],
+  "frontend_tests": {
+    "passed": 35,
+    "failed": 0
+  },
+  "full_python_suite": "In progress; an assertion failure is being investigated. Smoke verification passed."
+}

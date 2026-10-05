@@ -1,0 +1,83 @@
+{
+  "verified_at_utc": "2026-10-04T22:32:32.495171+00:00",
+  "success": true,
+  "weights_unchanged": {
+    "experiments/baseline_v1/models/selected.joblib": "b413ce1e45d678f64dd03e3430630e09887b9a89303c534807f6cc78db1e19ef",
+    "experiments/robust_v2/models/selected.joblib": "8f7c2fd5e00305abe59115951c3df7112fd711aad1b4ccaada9dd38d4c3b0b3b",
+    "experiments/calibrated_v3/models/selected.joblib": "2e16ec3c201c026dc85fe63617eb84841f8769973c3880cb14ab7e82a73bf85d",
+    "experiments/biochemical_v4/models/selected.joblib": "59ffb63213b815500a1030408f9f1b07489625e39e1c81f5dfa1d9cde7b6836f"
+  },
+  "external_replay": [
+    {
+      "view": "available",
+      "n": 1254,
+      "max_abs_score_difference": 1.1102230246251565e-16,
+      "thresholds_and_routes_match": true,
+      "F1": 0.6164383561643836,
+      "sensitivity": 0.6338028169014085,
+      "specificity": 0.9135446685878963,
+      "precision": 0.6,
+      "tp": 135,
+      "fp": 90,
+      "tn": 951,
+      "fn": 78
+    },
+    {
+      "view": "drop30",
+      "n": 1254,
+      "max_abs_score_difference": 1.1102230246251565e-16,
+      "thresholds_and_routes_match": true,
+      "F1": 0.5800865800865801,
+      "sensitivity": 0.6291079812206573,
+      "specificity": 0.8895292987512008,
+      "precision": 0.5381526104417671,
+      "tp": 134,
+      "fp": 115,
+      "tn": 926,
+      "fn": 79
+    },
+    {
+      "view": "cbc_only",
+      "n": 1254,
+      "max_abs_score_difference": 1.1102230246251565e-16,
+      "thresholds_and_routes_match": true,
+      "F1": 0.5941043083900227,
+      "sensitivity": 0.6150234741784038,
+      "specificity": 0.9068203650336215,
+      "precision": 0.5745614035087719,
+      "tp": 131,
+      "fp": 97,
+      "tn": 944,
+      "fn": 82
+    }
+  ],
+  "total_replayed_predictions": 3762,
+  "no_training_or_threshold_selection": true,
+  "synthetic_api_states": {
+    "predicted-patient": "research_prediction",
+    "predicted-doctor": "research_prediction",
+    "observed-doctor": "observed",
+    "unknown-patient": "unknown_pregnancy"
+  },
+  "clinicalValidated": false,
+  "limitations": [
+    "replay of the already frozen test, not a new independent cohort",
+    "quality describes low ferritin in the evaluated female age group, not the 12 clinical classes"
+  ],
+  "python_tests_passed": 163,
+  "node_tests_passed": 35,
+  "frontend_build_passed": true,
+  "browser_patient_end_to_end_verified": true,
+  "browser_unknown_pregnancy_verified": true,
+  "pdf_qa": {
+    "synthetic_reports": 4,
+    "pages_visually_inspected": 14,
+    "text_verified": true
+  },
+  "running_default_backend": {
+    "url": "http://127.0.0.1:8000",
+    "configuration": "baseline_v1_plus_ferritin_v4",
+    "core_state": "ready",
+    "ferritin_state": "ready"
+  }
+}

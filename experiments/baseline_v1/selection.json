@@ -1,0 +1,44 @@
+{
+  "anemia_class": {
+    "primary": "extra_trees",
+    "primary_cv_score": 0.6857299315937052,
+    "cbc": "catboost_cbc",
+    "cbc_cv_score": 0.47413381353953393
+  },
+  "iron_deficiency": {
+    "primary": "catboost_dropout",
+    "primary_cv_score": 0.9334211630508116,
+    "cbc": "extra_trees_cbc",
+    "cbc_cv_score": 0.7790432801822323
+  },
+  "B12_deficiency": {
+    "primary": "catboost_dropout",
+    "primary_cv_score": 0.8610467236151959,
+    "cbc": "logistic_cbc",
+    "cbc_cv_score": 0.5393258426966292
+  },
+  "folate_deficiency": {
+    "primary": "catboost_dropout",
+    "primary_cv_score": 0.6583883952305004,
+    "cbc": "catboost_cbc",
+    "cbc_cv_score": 0.3728813559322034
+  },
+  "B6_deficiency": {
+    "primary": "catboost",
+    "primary_cv_score": 0.6571311571311571,
+    "cbc": "catboost_cbc",
+    "cbc_cv_score": 0.2222222222222222
+  },
+  "copper_deficiency": {
+    "primary": "catboost",
+    "primary_cv_score": 0.7300971670719569,
+    "cbc": "catboost_cbc",
+    "cbc_cv_score": 0.06666666666666667
+  },
+  "inflammation_anemia": {
+    "primary": "catboost_dropout",
+    "primary_cv_score": 0.8739847983235998,
+    "cbc": "logistic_cbc",
+    "cbc_cv_score": 0.45569620253164556
+  }
+}

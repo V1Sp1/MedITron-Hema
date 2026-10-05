@@ -1,0 +1,400 @@
+{
+  "low_ferritin/extended": {
+    "selected": "catboost_dropout",
+    "threshold": 0.25894773118553177,
+    "legacy_threshold": 0.21661340942719218,
+    "candidates": {
+      "logistic_values": {
+        "rank": [
+          0.5637063702818245,
+          0.8383268000906317,
+          -0.31848797993026934
+        ],
+        "threshold": 0.23245751410437102,
+        "config": {
+          "name": "logistic_values",
+          "algorithm": "logistic",
+          "mask": false,
+          "augment": false
+        }
+      },
+      "logistic_mask": {
+        "rank": [
+          0.5390332249207823,
+          0.8231342276868916,
+          -0.33446961733254854
+        ],
+        "threshold": 0.34906137251532515,
+        "config": {
+          "name": "logistic_mask",
+          "algorithm": "logistic",
+          "mask": true,
+          "augment": false
+        }
+      },
+      "catboost": {
+        "rank": [
+          0.5548663257497802,
+          0.8223903155209153,
+          -0.3289617378398234
+        ],
+        "threshold": 0.410917631958545,
+        "config": {
+          "name": "catboost",
+          "algorithm": "catboost",
+          "augment": false
+        }
+      },
+      "catboost_dropout": {
+        "rank": [
+          0.6258956371980018,
+          0.8636702373577496,
+          -0.2941317848866092
+        ],
+        "threshold": 0.25894773118553177,
+        "config": {
+          "name": "catboost_dropout",
+          "algorithm": "catboost",
+          "augment": true
+        }
+      }
+    },
+    "n": 2420,
+    "positives": 373,
+    "training_cycles": [
+      "nhanes_2003_2004",
+      "nhanes_2005_2006"
+    ]
+  },
+  "low_ferritin/cbc": {
+    "selected": "catboost_dropout",
+    "threshold": 0.26952614408091036,
+    "legacy_threshold": 0.38641961195790764,
+    "candidates": {
+      "logistic_values": {
+        "rank": [
+          0.501395605602172,
+          0.8105794001815251,
+          -0.3444680955684128
+        ],
+        "threshold": 0.23610323553428786,
+        "config": {
+          "name": "logistic_values",
+          "algorithm": "logistic",
+          "mask": false,
+          "augment": false
+        }
+      },
+      "logistic_mask": {
+        "rank": [
+          0.501395605602172,
+          0.8105794001815251,
+          -0.34446809556841285
+        ],
+        "threshold": 0.2361032355342879,
+        "config": {
+          "name": "logistic_mask",
+          "algorithm": "logistic",
+          "mask": true,
+          "augment": false
+        }
+      },
+      "catboost": {
+        "rank": [
+          0.5331046263443429,
+          0.8178201016068765,
+          -0.33217666359285936
+        ],
+        "threshold": 0.3694420229015281,
+        "config": {
+          "name": "catboost",
+          "algorithm": "catboost",
+          "augment": false
+        }
+      },
+      "catboost_dropout": {
+        "rank": [
+          0.5876640283093606,
+          0.855631925881202,
+          -0.3029256219932063
+        ],
+        "threshold": 0.26952614408091036,
+        "config": {
+          "name": "catboost_dropout",
+          "algorithm": "catboost",
+          "augment": true
+        }
+      }
+    },
+    "n": 2420,
+    "positives": 373,
+    "training_cycles": [
+      "nhanes_2003_2004",
+      "nhanes_2005_2006"
+    ]
+  },
+  "low_B12/extended": {
+    "selected": "logistic_mask",
+    "threshold": 0.031867390486076355,
+    "legacy_threshold": 0.1203851630747488,
+    "candidates": {
+      "logistic_values": {
+        "rank": [
+          0.02884289568406332,
+          0.5846581400908438,
+          -0.09239496873719957
+        ],
+        "threshold": 0.03190168651153955,
+        "config": {
+          "name": "logistic_values",
+          "algorithm": "logistic",
+          "mask": false,
+          "augment": false
+        }
+      },
+      "logistic_mask": {
+        "rank": [
+          0.029948456273096488,
+          0.5520714797991872,
+          -0.10190511467069545
+        ],
+        "threshold": 0.031867390486076355,
+        "config": {
+          "name": "logistic_mask",
+          "algorithm": "logistic",
+          "mask": true,
+          "augment": false
+        }
+      },
+      "catboost": {
+        "rank": [
+          0.020842902997257613,
+          0.516365049007889,
+          -0.09679397750874424
+        ],
+        "threshold": 0.044757110491017923,
+        "config": {
+          "name": "catboost",
+          "algorithm": "catboost",
+          "augment": false
+        }
+      },
+      "catboost_dropout": {
+        "rank": [
+          0.02023667556632769,
+          0.5098087497011714,
+          -0.09573514644901629
+        ],
+        "threshold": 0.027065694164385822,
+        "config": {
+          "name": "catboost_dropout",
+          "algorithm": "catboost",
+          "augment": true
+        }
+      }
+    },
+    "n": 4789,
+    "positives": 89,
+    "training_cycles": [
+      "nhanes_2011_2012"
+    ]
+  },
+  "low_B12/cbc": {
+    "selected": "logistic_values",
+    "threshold": 0.029238930383309412,
+    "legacy_threshold": 0.1701373209776506,
+    "candidates": {
+      "logistic_values": {
+        "rank": [
+          0.024808529165285406,
+          0.5523783249254758,
+          -0.09277404272715525
+        ],
+        "threshold": 0.029238930383309412,
+        "config": {
+          "name": "logistic_values",
+          "algorithm": "logistic",
+          "mask": false,
+          "augment": false
+        }
+      },
+      "logistic_mask": {
+        "rank": [
+          0.024800258609328465,
+          0.5578732897653442,
+          -0.09428909985825618
+        ],
+        "threshold": 0.029240906779200056,
+        "config": {
+          "name": "logistic_mask",
+          "algorithm": "logistic",
+          "mask": true,
+          "augment": false
+        }
+      },
+      "catboost": {
+        "rank": [
+          0.020535992243976606,
+          0.4965687820071849,
+          -0.0965213833882246
+        ],
+        "threshold": 0.03444148074025531,
+        "config": {
+          "name": "catboost",
+          "algorithm": "catboost",
+          "augment": false
+        }
+      },
+      "catboost_dropout": {
+        "rank": [
+          0.021649650291128277,
+          0.5286285160131469,
+          -0.09478427393306285
+        ],
+        "threshold": 0.028467984259691492,
+        "config": {
+          "name": "catboost_dropout",
+          "algorithm": "catboost",
+          "augment": true
+        }
+      }
+    },
+    "n": 4793,
+    "positives": 89,
+    "training_cycles": [
+      "nhanes_2011_2012"
+    ]
+  },
+  "low_PLP/extended": {
+    "selected": "logistic_values",
+    "threshold": 0.24299803831455358,
+    "legacy_threshold": 0.009594935654746712,
+    "candidates": {
+      "logistic_values": {
+        "rank": [
+          0.3228313351849359,
+          0.7360100300902709,
+          -0.3544115625097435
+        ],
+        "threshold": 0.24299803831455358,
+        "config": {
+          "name": "logistic_values",
+          "algorithm": "logistic",
+          "mask": false,
+          "augment": false
+        }
+      },
+      "logistic_mask": {
+        "rank": [
+          0.32176865700170654,
+          0.7349636910732197,
+          -0.3546055328221963
+        ],
+        "threshold": 0.24294018306918835,
+        "config": {
+          "name": "logistic_mask",
+          "algorithm": "logistic",
+          "mask": true,
+          "augment": false
+        }
+      },
+      "catboost": {
+        "rank": [
+          0.2943969974296319,
+          0.7165819458375124,
+          -0.3776363028541814
+        ],
+        "threshold": 0.4406823457232222,
+        "config": {
+          "name": "catboost",
+          "algorithm": "catboost",
+          "augment": false
+        }
+      },
+      "catboost_dropout": {
+        "rank": [
+          0.3088100382302508,
+          0.7419787362086259,
+          -0.35221678884645635
+        ],
+        "threshold": 0.26074720335244217,
+        "config": {
+          "name": "catboost_dropout",
+          "algorithm": "catboost",
+          "augment": true
+        }
+      }
+    },
+    "n": 4613,
+    "positives": 625,
+    "training_cycles": [
+      "nhanes_2005_2006"
+    ]
+  },
+  "low_PLP/cbc": {
+    "selected": "catboost_dropout",
+    "threshold": 0.24351104141469784,
+    "legacy_threshold": 0.1540549600491662,
+    "candidates": {
+      "logistic_values": {
+        "rank": [
+          0.24264454932364293,
+          0.6807579158316633,
+          -0.37580326859717605
+        ],
+        "threshold": 0.21690557109507944,
+        "config": {
+          "name": "logistic_values",
+          "algorithm": "logistic",
+          "mask": false,
+          "augment": false
+        }
+      },
+      "logistic_mask": {
+        "rank": [
+          0.24264454932364293,
+          0.6807579158316633,
+          -0.37580326859717605
+        ],
+        "threshold": 0.21690557109507944,
+        "config": {
+          "name": "logistic_mask",
+          "algorithm": "logistic",
+          "mask": true,
+          "augment": false
+        }
+      },
+      "catboost": {
+        "rank": [
+          0.2273017264696325,
+          0.6627042084168338,
+          -0.39415755654144413
+        ],
+        "threshold": 0.403548088142322,
+        "config": {
+          "name": "catboost",
+          "algorithm": "catboost",
+          "augment": false
+        }
+      },
+      "catboost_dropout": {
+        "rank": [
+          0.2557077459498913,
+          0.7002224448897796,
+          -0.3673958359369695
+        ],
+        "threshold": 0.24351104141469784,
+        "config": {
+          "name": "catboost_dropout",
+          "algorithm": "catboost",
+          "augment": true
+        }
+      }
+    },
+    "n": 4617,
+    "positives": 625,
+    "training_cycles": [
+      "nhanes_2005_2006"
+    ]
+  }
+}

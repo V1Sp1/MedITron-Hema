@@ -1,0 +1,63 @@
+{
+  "01_cbc.pdf + 02_iron.pdf": {
+    "documents": 2,
+    "measurements": 14,
+    "inputs": {
+      "hemoglobin": 108.0,
+      "RBC": 4.1,
+      "hematocrit": 34.0,
+      "MCV": 82.0,
+      "MCH": 26.3,
+      "MCHC": 318.0,
+      "RDW": 15.2,
+      "platelets": 280.0,
+      "WBC": 6.2,
+      "ferritin": 9.0,
+      "serum_iron": 7.5,
+      "transferrin": 3.1,
+      "TIBC": 70.0,
+      "TSAT": 10.7
+    },
+    "collectionDates": [
+      "2026-09-20",
+      "2026-10-01"
+    ],
+    "issues": []
+  },
+  "03_units_bounds_repeat.pdf": {
+    "documents": 1,
+    "measurements": 5,
+    "inputs": {
+      "hemoglobin": 131.0,
+      "MMA": 0.3,
+      "CRP": 5.0
+    },
+    "collectionDates": [
+      "2026-10-02"
+    ],
+    "issues": []
+  },
+  "01_cbc.pdf + 03_units_bounds_repeat.pdf": {
+    "documents": 2,
+    "measurements": 14,
+    "inputs": {
+      "RBC": 4.1,
+      "hematocrit": 34.0,
+      "MCV": 82.0,
+      "MCH": 26.3,
+      "MCHC": 318.0,
+      "RDW": 15.2,
+      "platelets": 280.0,
+      "WBC": 6.2,
+      "MMA": 0.3,
+      "CRP": 5.0
+    },
+    "collectionDates": [
+      "2026-10-01",
+      "2026-10-02"
+    ],
+    "issues": [
+      "repeated_analytes_preserved"
+    ]
+  }
+}

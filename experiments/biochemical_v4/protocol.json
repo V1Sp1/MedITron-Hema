@@ -1,0 +1,662 @@
+{
+  "version": "biochemical-v4-1",
+  "frozen_at_utc": "2026-10-04T21:48:27.748924+00:00",
+  "seed": 20261005,
+  "clinical_targets_trained": false,
+  "endpoints": {
+    "low_ferritin": {
+      "marker": "ferritin",
+      "cutoff": 15.0,
+      "unit": "µg/L",
+      "legacy_target": "iron_deficiency",
+      "train_cycles": [
+        "nhanes_2003_2004",
+        "nhanes_2005_2006"
+      ],
+      "test_cycle": "nhanes_2007_2008",
+      "minimum_age": 18
+    },
+    "low_B12": {
+      "marker": "vitamin_B12",
+      "cutoff": 200.0,
+      "unit": "pg/mL",
+      "legacy_target": "B12_deficiency",
+      "train_cycles": [
+        "nhanes_2011_2012"
+      ],
+      "test_cycle": "nhanes_2013_2014",
+      "minimum_age": 20
+    },
+    "low_PLP": {
+      "marker": "vitamin_B6",
+      "cutoff": 20.0,
+      "unit": "nmol/L",
+      "legacy_target": "B6_deficiency",
+      "train_cycles": [
+        "nhanes_2005_2006"
+      ],
+      "test_cycle": "nhanes_2007_2008",
+      "minimum_age": 18
+    }
+  },
+  "configs": [
+    {
+      "name": "logistic_values",
+      "algorithm": "logistic",
+      "mask": false,
+      "augment": false
+    },
+    {
+      "name": "logistic_mask",
+      "algorithm": "logistic",
+      "mask": true,
+      "augment": false
+    },
+    {
+      "name": "catboost",
+      "algorithm": "catboost",
+      "augment": false
+    },
+    {
+      "name": "catboost_dropout",
+      "algorithm": "catboost",
+      "augment": true
+    }
+  ],
+  "routes": [
+    "extended",
+    "cbc"
+  ],
+  "cv_folds": 5,
+  "bootstrap_replicates": 500,
+  "reference_source": "https://stacks.cdc.gov/view/cdc/11790/cdc_11790_DS1.pdf",
+  "features": {
+    "low_ferritin": {
+      "extended": [
+        "age_years",
+        "sex",
+        "hemoglobin",
+        "RBC",
+        "hematocrit",
+        "MCV",
+        "MCH",
+        "MCHC",
+        "RDW",
+        "platelets",
+        "WBC",
+        "creatinine",
+        "albumin",
+        "LDH",
+        "CRP"
+      ],
+      "cbc": [
+        "age_years",
+        "sex",
+        "hemoglobin",
+        "RBC",
+        "hematocrit",
+        "MCV",
+        "MCH",
+        "MCHC",
+        "RDW",
+        "platelets",
+        "WBC"
+      ]
+    },
+    "low_B12": {
+      "extended": [
+        "age_years",
+        "sex",
+        "hemoglobin",
+        "RBC",
+        "hematocrit",
+        "MCV",
+        "MCH",
+        "MCHC",
+        "RDW",
+        "platelets",
+        "WBC",
+        "creatinine",
+        "albumin",
+        "LDH"
+      ],
+      "cbc": [
+        "age_years",
+        "sex",
+        "hemoglobin",
+        "RBC",
+        "hematocrit",
+        "MCV",
+        "MCH",
+        "MCHC",
+        "RDW",
+        "platelets",
+        "WBC"
+      ]
+    },
+    "low_PLP": {
+      "extended": [
+        "age_years",
+        "sex",
+        "hemoglobin",
+        "RBC",
+        "hematocrit",
+        "MCV",
+        "MCH",
+        "MCHC",
+        "RDW",
+        "platelets",
+        "WBC",
+        "creatinine",
+        "albumin",
+        "LDH",
+        "CRP"
+      ],
+      "cbc": [
+        "age_years",
+        "sex",
+        "hemoglobin",
+        "RBC",
+        "hematocrit",
+        "MCV",
+        "MCH",
+        "MCHC",
+        "RDW",
+        "platelets",
+        "WBC"
+      ]
+    }
+  },
+  "eligibility": "age>=18 (B12>=20); pregnancy/unknown pregnancy in women 18–44 excluded; iron only F18–49; >=5 measured supported labs, extended needs >=1 supported biochemical predictor",
+  "age_transform": "predictor age capped at 80 across all cycles; published source ages preserved",
+  "unknown_references": "missing marker excluded for its own endpoint, never labeled negative",
+  "development_views": [
+    "available",
+    "drop30"
+  ],
+  "external_views": [
+    "available",
+    "drop30",
+    "cbc_only"
+  ],
+  "selection": "highest mean AP across development OOF available/drop30; then mean AUROC; then lower log loss",
+  "threshold_rule": "lowest threshold giving specificity>=0.90 in BOTH development OOF views; no clinical acceptance claim",
+  "grouping": "5-fold StratifiedGroupKFold by cycle/stratum/PSU; all patient copies stay in training partition",
+  "external_gate": {
+    "minimum_positives": 30,
+    "minimum_specificity": 0.85,
+    "minimum_F1_gain_vs_v1_tuned": 0.02,
+    "paired_sensitivity_gain_ci_low_above": 0.0,
+    "stress_F1_drop_vs_v1_tuned_at_most": 0.02
+  },
+  "release_policy": "Never replace clinical deficiency/anemia-class heads with marker heads. Accepted heads can only be exposed as a separate research biochemical predictor.",
+  "baseline": {
+    "path": "experiments/baseline_v1/models/selected.joblib",
+    "sha256": "b413ce1e45d678f64dd03e3430630e09887b9a89303c534807f6cc78db1e19ef"
+  },
+  "test_mapping": {
+    "nhanes_2007_2008": [
+      {
+        "target": "age_years",
+        "target_unit": "years",
+        "table": "DEMO_E",
+        "column": "RIDAGEYR",
+        "source_unit": "years",
+        "factor_to_case": 1.0,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/DEMO_E.htm",
+        "notes": "Public-use age top-coded at 80; predictor coarsening is fixed separately."
+      },
+      {
+        "target": "sex",
+        "target_unit": null,
+        "table": "DEMO_E",
+        "column": "RIAGENDR",
+        "source_unit": null,
+        "factor_to_case": null,
+        "offset_to_case": null,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/DEMO_E.htm",
+        "notes": "",
+        "categorical_mapping": {
+          "1": "M",
+          "2": "F"
+        }
+      },
+      {
+        "target": "hemoglobin",
+        "target_unit": "g/L",
+        "table": "CBC_E",
+        "column": "LBXHGB",
+        "source_unit": "g/dL",
+        "factor_to_case": 10,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/CBC_E.htm",
+        "notes": ""
+      },
+      {
+        "target": "RBC",
+        "target_unit": "10^12/L",
+        "table": "CBC_E",
+        "column": "LBXRBCSI",
+        "source_unit": "million cells/µL",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/CBC_E.htm",
+        "notes": ""
+      },
+      {
+        "target": "hematocrit",
+        "target_unit": "%",
+        "table": "CBC_E",
+        "column": "LBXHCT",
+        "source_unit": "%",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/CBC_E.htm",
+        "notes": ""
+      },
+      {
+        "target": "MCV",
+        "target_unit": "fL",
+        "table": "CBC_E",
+        "column": "LBXMCVSI",
+        "source_unit": "fL",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/CBC_E.htm",
+        "notes": ""
+      },
+      {
+        "target": "MCH",
+        "target_unit": "pg",
+        "table": "CBC_E",
+        "column": "LBXMCHSI",
+        "source_unit": "pg",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/CBC_E.htm",
+        "notes": ""
+      },
+      {
+        "target": "MCHC",
+        "target_unit": "g/L",
+        "table": "CBC_E",
+        "column": "LBXMC",
+        "source_unit": "g/dL",
+        "factor_to_case": 10,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/CBC_E.htm",
+        "notes": ""
+      },
+      {
+        "target": "RDW",
+        "target_unit": "%",
+        "table": "CBC_E",
+        "column": "LBXRDW",
+        "source_unit": "%",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/CBC_E.htm",
+        "notes": ""
+      },
+      {
+        "target": "platelets",
+        "target_unit": "10^9/L",
+        "table": "CBC_E",
+        "column": "LBXPLTSI",
+        "source_unit": "1000 cells/µL",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/CBC_E.htm",
+        "notes": ""
+      },
+      {
+        "target": "WBC",
+        "target_unit": "10^9/L",
+        "table": "CBC_E",
+        "column": "LBXWBCSI",
+        "source_unit": "1000 cells/µL",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/CBC_E.htm",
+        "notes": ""
+      },
+      {
+        "target": "creatinine",
+        "target_unit": "µmol/L",
+        "table": "BIOPRO_E",
+        "column": "LBDSCRSI",
+        "source_unit": "µmol/L",
+        "factor_to_case": 1.0,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/BIOPRO_E.htm",
+        "notes": ""
+      },
+      {
+        "target": "albumin",
+        "target_unit": "g/L",
+        "table": "BIOPRO_E",
+        "column": "LBDSALSI",
+        "source_unit": "g/L",
+        "factor_to_case": 1.0,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/BIOPRO_E.htm",
+        "notes": ""
+      },
+      {
+        "target": "LDH",
+        "target_unit": "U/L",
+        "table": "BIOPRO_E",
+        "column": "LBXSLDSI",
+        "source_unit": "U/L",
+        "factor_to_case": 1.0,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/BIOPRO_E.htm",
+        "notes": ""
+      },
+      {
+        "target": "ferritin",
+        "target_unit": "µg/L",
+        "table": "FERTIN_E",
+        "column": "LBDFERSI",
+        "source_unit": "µg/L",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/FERTIN_E.htm",
+        "notes": "Roche/Hitachi; adult reference only in women 18–49 after eligibility filter."
+      },
+      {
+        "target": "vitamin_B6",
+        "target_unit": "nmol/L",
+        "table": "VIT_B6_E",
+        "column": "LBXPLP",
+        "source_unit": "nmol/L",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/VIT_B6_E.htm",
+        "notes": "Published serum HPLC PLP; early enzymatic PLP excluded."
+      },
+      {
+        "target": "CRP",
+        "target_unit": "mg/L",
+        "table": "CRP_E",
+        "column": "LBXCRP",
+        "source_unit": "mg/dL",
+        "factor_to_case": 10,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2007/DataFiles/CRP_E.htm",
+        "notes": "Case unit is mg/L; do not retain mg/dL numbers."
+      }
+    ],
+    "nhanes_2013_2014": [
+      {
+        "target": "age_years",
+        "target_unit": "years",
+        "table": "DEMO_H",
+        "column": "RIDAGEYR",
+        "source_unit": "years",
+        "factor_to_case": 1.0,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/DEMO_H.htm",
+        "notes": "Public-use age top-coded at 80; predictor coarsening is fixed separately."
+      },
+      {
+        "target": "sex",
+        "target_unit": null,
+        "table": "DEMO_H",
+        "column": "RIAGENDR",
+        "source_unit": null,
+        "factor_to_case": null,
+        "offset_to_case": null,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/DEMO_H.htm",
+        "notes": "",
+        "categorical_mapping": {
+          "1": "M",
+          "2": "F"
+        }
+      },
+      {
+        "target": "hemoglobin",
+        "target_unit": "g/L",
+        "table": "CBC_H",
+        "column": "LBXHGB",
+        "source_unit": "g/dL",
+        "factor_to_case": 10,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/CBC_H.htm",
+        "notes": ""
+      },
+      {
+        "target": "RBC",
+        "target_unit": "10^12/L",
+        "table": "CBC_H",
+        "column": "LBXRBCSI",
+        "source_unit": "million cells/µL",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/CBC_H.htm",
+        "notes": ""
+      },
+      {
+        "target": "hematocrit",
+        "target_unit": "%",
+        "table": "CBC_H",
+        "column": "LBXHCT",
+        "source_unit": "%",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/CBC_H.htm",
+        "notes": ""
+      },
+      {
+        "target": "MCV",
+        "target_unit": "fL",
+        "table": "CBC_H",
+        "column": "LBXMCVSI",
+        "source_unit": "fL",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/CBC_H.htm",
+        "notes": ""
+      },
+      {
+        "target": "MCH",
+        "target_unit": "pg",
+        "table": "CBC_H",
+        "column": "LBXMCHSI",
+        "source_unit": "pg",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/CBC_H.htm",
+        "notes": ""
+      },
+      {
+        "target": "MCHC",
+        "target_unit": "g/L",
+        "table": "CBC_H",
+        "column": "LBXMC",
+        "source_unit": "g/dL",
+        "factor_to_case": 10,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/CBC_H.htm",
+        "notes": ""
+      },
+      {
+        "target": "RDW",
+        "target_unit": "%",
+        "table": "CBC_H",
+        "column": "LBXRDW",
+        "source_unit": "%",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/CBC_H.htm",
+        "notes": ""
+      },
+      {
+        "target": "platelets",
+        "target_unit": "10^9/L",
+        "table": "CBC_H",
+        "column": "LBXPLTSI",
+        "source_unit": "1000 cells/µL",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/CBC_H.htm",
+        "notes": ""
+      },
+      {
+        "target": "WBC",
+        "target_unit": "10^9/L",
+        "table": "CBC_H",
+        "column": "LBXWBCSI",
+        "source_unit": "1000 cells/µL",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/CBC_H.htm",
+        "notes": ""
+      },
+      {
+        "target": "creatinine",
+        "target_unit": "µmol/L",
+        "table": "BIOPRO_H",
+        "column": "LBDSCRSI",
+        "source_unit": "µmol/L",
+        "factor_to_case": 1.0,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/BIOPRO_H.htm",
+        "notes": ""
+      },
+      {
+        "target": "albumin",
+        "target_unit": "g/L",
+        "table": "BIOPRO_H",
+        "column": "LBDSALSI",
+        "source_unit": "g/L",
+        "factor_to_case": 1.0,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/BIOPRO_H.htm",
+        "notes": ""
+      },
+      {
+        "target": "LDH",
+        "target_unit": "U/L",
+        "table": "BIOPRO_H",
+        "column": "LBXSLDSI",
+        "source_unit": "U/L",
+        "factor_to_case": 1.0,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/BIOPRO_H.htm",
+        "notes": ""
+      },
+      {
+        "target": "vitamin_B12",
+        "target_unit": "pg/mL",
+        "table": "VITB12_H",
+        "column": "LBDB12",
+        "source_unit": "pg/mL",
+        "factor_to_case": 1,
+        "offset_to_case": 0.0,
+        "unit_status": "documented",
+        "unit_conversion_allowed": true,
+        "source_url": "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/VITB12_H.htm",
+        "notes": "Use published reagent-lot-corrected result, without a second correction."
+      }
+    ]
+  },
+  "test_source_sha256": {
+    "data/external/raw/nhanes_2007_2008/BIOPRO_E.xpt": "6c2cec1e790c09e0319bf5a576a2ab64861d4270679c8113663f83a6b7087ced",
+    "data/external/raw/nhanes_2007_2008/CBC_E.xpt": "e83558b948eaf1b002e029d69731c01c81935ebf85013358d59d2aa95ad38a26",
+    "data/external/raw/nhanes_2007_2008/CRP_E.xpt": "5cf3fc87d8c5eb8b8c053e5a8ea183b62dd29b417c4aeaaa53dc4b354ef611ab",
+    "data/external/raw/nhanes_2007_2008/DEMO_E.xpt": "02b8e97703d04bc99769c751881bece51ac9ba68cf18a2992a45d3bdfb856147",
+    "data/external/raw/nhanes_2007_2008/FERTIN_E.xpt": "885c4a8c159a79bd9110e608f5b8b8305276c83679cf8291b92b18ed17922e44",
+    "data/external/raw/nhanes_2007_2008/VIT_B6_E.xpt": "ce00e8885a4777c91e84ad6c13ef065f98089afae6cd2850b4712f77eddf78c2",
+    "data/external/raw/nhanes_2007_2008/download_manifest.json": "5ef4384a46d24db965dc511bbf19cda1ccc0d7c5fb077ca6ee912a30b60abdb5",
+    "data/external/raw/nhanes_2013_2014/BIOPRO_H.xpt": "b114fde7fc46933e6b4e3f620b8e7b61ea5b46f82121c0dc05a7b8c1fbdd0548",
+    "data/external/raw/nhanes_2013_2014/CBC_H.xpt": "08f6fca4aacebacafb2b311c2edfc6897ad92f2c8f8dab14e18bf41acdc4ddee",
+    "data/external/raw/nhanes_2013_2014/DEMO_H.xpt": "f8f0cbb3085a323d4cde22349b164878fea1e64dbc404e65b5815c7816b547d7",
+    "data/external/raw/nhanes_2013_2014/VITB12_H.xpt": "6d280479d279379a1f67278722e3b6a1f1a3566c06dfc3a1f02c9713975633ae",
+    "data/external/raw/nhanes_2013_2014/download_manifest.json": "094562b4de74c92e38a7e39b7c7901e7730f38600ab021d169af6822bbb69b42"
+  },
+  "source_sha256": {
+    "data/case/deficiency_anemia.csv": "9d97e125c961a92222eb31c86188ba7a7736ece1ba59ce296d32e300b107dbb6",
+    "data/feature_dictionary.json": "5abbeefa49108b5ce82c1bce3cec9c76b57fc973ececa91d88b82d79721e2083",
+    "experiments/external_validation_v1/features.csv": "6a8252e42c6406319395b50842335fbc47661af51999feff458deeac4deaa52c",
+    "experiments/external_validation_v1/cohort_audit.csv": "b7349204824dde0ede08e3234839c35793602bbb1371573fd481495f9b67f674",
+    "data/external/processed/nhanes_case_units_v1/nhanes_2003_2004_features.csv": "488bf293da43b80ff7199f26b0cbf2268921267d6c6cdb847b3b8b0dc447b54f",
+    "data/external/processed/nhanes_case_units_v1/nhanes_2003_2004_metadata.csv": "f8f02fa00d1248cdc6117be83a4fee402d7d6b3ec7e0fbce5547bf5f6a7fc9bd",
+    "data/external/processed/nhanes_case_units_v1/nhanes_2011_2012_features.csv": "3d3255f78025cff5a4c44fcb5c3ec40798ea188efe2a9683c669371f74fef4ad",
+    "data/external/processed/nhanes_case_units_v1/nhanes_2011_2012_metadata.csv": "738063335d04eda42ca6ac99dc8edd4ba21f886efa8d839a3501f61467f4b71c"
+  },
+  "code_sha256": {
+    "ml_baselines/train_biochemical.py": "b447af058c0eace7045d851c25e54421625d6f8678fed5975deff2e4eeb80351",
+    "ml_baselines/biochemical.py": "a94dcf88dd3224334d1f73acb93ec837d70e9421c8f71ab0156e90216ec6e9d7",
+    "ml_baselines/nhanes_v4.py": "47aabcf71a30edfd83914542ce419eaf3313204bffc4cc6314d016805b5a93e3",
+    "ml_baselines/core.py": "84d7668cfaaced184bbc506eced55e1434844472b02d494c3a42f8776caae3c8",
+    "ml_baselines/advanced.py": "175d796f08bfbf1404ee30270011be02cfff321fbe66f8afb99bb9bb5fa5511e",
+    "ml_baselines/calibration.py": "3800e6d6395a26222485fba30e6bfec3fdd562a067667db80f538988b1561245",
+    "ml_baselines/external_validate.py": "9cebf44ee6a5ce16a93b95f0d650533128d3b7110634117a4a9fef4979a2ef02",
+    "scripts/prepare_nhanes.py": "bb1b08ac55745da0ee1d75d80cf201f9cd8c4e54d542be9e7a232ce50688ec4b",
+    "scripts/fetch_nhanes_v4.py": "64c2476110a4031cdc44b69f9f7bb76ac0774ec143757547088beab8511a6df7"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "set_before_reading_v2_holdout": true,
+  "cv_mean_primary_gain_at_least": 0.01,
+  "minimum_all_panel_mean_deficit_holdout_delta": -0.03,
+  "minimum_primary_class_holdout_delta": -0.03,
+  "minimum_available_api_accuracy_delta": -0.03,
+  "minimum_available_api_coverage_delta": -0.01,
+  "note": "Repeated holdout can block an unsafe promotion, but does not select or retune candidates. Its prior use limits independence."
+}

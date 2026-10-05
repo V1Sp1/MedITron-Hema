@@ -1,0 +1,498 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Техническая реализация рекомендаций Hema</title><style>body{margin:0;background:#eef4f5;color:#103648;font:17px/1.65 system-ui,sans-serif}main{max-width:1050px;margin:24px auto;background:white;padding:38px;border-radius:12px}h1{font-size:32px;line-height:1.25}h2{margin-top:42px}img{max-width:100%;height:auto}a{color:#086a70}code{font:14px/1.5 ui-monospace,monospace;background:#edf3f4;padding:2px 4px}pre{overflow:auto;background:#edf3f4;padding:18px;border-radius:6px;white-space:pre}pre code{padding:0}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:9px;text-align:left;border:1px solid #d4e0e3;vertical-align:top}th{background:#eef5f6}.table{overflow:auto}nav{display:flex;flex-wrap:wrap;gap:12px;border-bottom:1px solid #d4e0e3;padding-bottom:18px}p,li{overflow-wrap:anywhere}@media(max-width:650px){main{margin:0;padding:20px;border-radius:0}h1{font-size:26px}}@media print{body{background:white}main{margin:0;padding:0;max-width:none}nav{display:none}pre{white-space:pre-wrap}.table{overflow:visible}h2,h3{break-after:avoid}tr{break-inside:avoid}}</style></head><body><main><nav><a href="../START_HERE.html">Начало</a></nav><h1>Техническая реализация рекомендаций Hema</h1>
+<p>Рекомендации — версионированный детерминированный выбор готовых фраз. В обычном расчёте нет генерации текста LLM, облачного запроса, случайного выбора или назначений лекарств. Отдельные каталоги пациента и врача описывают тот же результат разным языком. Тексты и политика полноты имеют статус черновика и требуют медицинского согласования.</p>
+<h2>Файлы и версии</h2>
+<p>backend/data/recommendations_patient.json и recommendations_doctor.json содержат по 20 фраз, версия phrases-draft-1.2, clinicalReviewStatus=draft. backend/data/sufficiency_policy.json содержит coverage-draft-1.0, clinicalValidated=false. recommendations.py валидирует каталоги, вычисляет условия и группирует ответ. verdicts.py проверяет ModelVerdict; data_sufficiency.py определяет покрытие; model_service.py создаёт истинный вердикт.</p>
+<p>Исходные клинические ориентиры сохранены в catalog.sources и backend/RECOMMENDATIONS.md. Это происхождение черновика, не доказательство медицинского утверждения или актуальности всех правил. Порог Hb берётся из кейса; версии каталогов не являются версиями обученных weights.</p>
+<h2>Структура каталога</h2>
+<p>Каталог имеет audience, version, clinicalReviewStatus, sources и items. У каждого item есть уникальный id, kind, topic, целочисленный priority, непустой text, when, suggestedFeatures, sourceIds. Разрешённые kind: conclusion, next_step, data_gap. Валидатор требует именно 20 фраз одной роли, известные условия/признаки/источники и не принимает произвольные выражения кода.</p>
+<p>В text разрешена единственная подстановка <code>{deficits}</code>. Она заменяется контролируемыми русскими именами положительных дефицитов. Другие фигурные placeholders отклоняются. ID нужен для прослеживаемости и тестов; topic связывает смысл/причину, priority задаёт порядок. SuggestedFeatures — список недостающих полей для обсуждения, не автоматическое назначение обследования.</p>
+<h2>Вердикт и его происхождение</h2>
+<p>ModelVerdict содержит anemiaClass (один из 12 классов/null), deficits (уникальный список iron/B12/folate/B6/copper/null), inflammation (bool/null) и status evaluated/uncertain/out_of_scope. null списка означает «решения не переданы», пустой список — «положительных решений нет»: это разные состояния.</p>
+<p>В обычном отчёте нужен modelConnected=true, непустой modelVersion и ModelVerdict. Scores, prediction.label и свободные предложения не создают решений. Истинный verdict строится адаптером из сохранённых моделей. В основном predict пользователь не может передать желаемый диагноз. Preview допускает явный verdict, но маркирует simulation=true/source=editorial_preview, не сохраняет отчёт и не объявляет настоящую модель подключённой.</p>
+<p>verdict_context возвращает modelState и разрешённый для фраз контекст. Для specific model условий необходим state=evaluated. Возможные состояния: not_connected, missing_verdict, evaluated, uncertain, out_of_scope, inconsistent, suppressed_sparse. Если Hb, class, deficits или воспалительная цель противоречат друг другу, контекст не выдаёт конкретные дефициты для выбора специфических фраз. ReasonCodes помогают понять почему.</p>
+<h2>Условия when</h2>
+<div class="table"><table><thead><tr><th>Условие</th><th>Проверка</th></tr></thead><tbody>
+<tr><td>anemia</td><td>Булевый статус отдельного правила Hb</td></tr>
+<tr><td>dataLevels</td><td>Текущий уровень insufficient/limited/broader</td></tr>
+<tr><td>modelStates</td><td>Разрешённые состояния модельного контекста</td></tr>
+<tr><td>presentAll</td><td>Все указанные поля не null</td></tr>
+<tr><td>presentAny</td><td>Хотя бы одно указанное поле не null</td></tr>
+<tr><td>missingAny</td><td>Хотя бы одно поле null</td></tr>
+<tr><td>missingGroupsAny</td><td>Не покрыта хотя бы одна указанная группа</td></tr>
+<tr><td>deficit</td><td>Нужный дефицит есть среди положительных решений</td></tr>
+<tr><td>maxDeficits</td><td>Число положительных решений не превышает указанное</td></tr>
+<tr><td>mixed</td><td>Минимум два дефицита либо mixed_deficiency class</td></tr>
+<tr><td>inflammation</td><td>Положительная цель inflammation_anemia/соответствующий класс</td></tr>
+<tr><td>anemiaClass</td><td>Точное совпадение разрешённого класса</td></tr>
+<tr><td>nonAnemicDeficit</td><td>Hb не ниже порога и есть дефицит/латентный класс</td></tr>
+</tbody></table></div>
+<p>Все заданные условия одного item должны выполняться одновременно. presentAny/missingAny — «хотя бы одно» внутри массива, не OR между независимыми ключами when. deficit/maxDeficits/mixed/inflammation/anemiaClass/nonAnemicDeficit требуют evaluated. Значения conditions валидируются до исполнения; eval или произвольных Python-функций из JSON нет.</p>
+<h2>Полнота данных</h2>
+<p>Лабораторный счётчик учитывает только 35 лабораторных признаков, не возраст и пол. Required core: возраст, пол, Hb. CBC context: Hb/MCV/MCH. Группы покрываются так: iron — ferritin, B12 — vitamin_B12 либо active_B12, folate — folate, B6 — vitamin_B6, copper — copper. Наличие других полей группы отображается как контекст, но не обязательно заменяет initial alternative.</p>
+<p>insufficient: нет core либо меньше 5 лабораторных значений. limited: минимум выполнен, но нет CBC context либо не покрыты iron/B12/folate. broader: есть core, минимум, CBC context и эти три группы. Broader не требует всех 35 анализов, не означает 100% уверенности и не измеряет качество модели. Покрытие B6/меди отображается отдельно.</p>
+<p>Ответ содержит laboratoryCount/Total, availableFeatures/missingFeatures, missingEssential/missingCBCContext, groups, reasonCodes, summary, policyVersion, clinicalValidated=false и modelConfidence=null. Недостающий анализ не считается отрицательным результатом. Политика показывает ограничения доступных данных, не клинически обязательную панель.</p>
+<h2>Порядок выбора и ограничения количества</h2>
+<p>phrases_for_report проверяет inputs, вычисляет полноту и контекст verdict, загружает каталог роли. Items сортируются по priority по убыванию и затем по id. Для каждого выполняется _matches. Подстановка deficits использует список context. От suggestedFeatures удаляются уже имеющиеся поля. Если присутствует общий либо активный B12, оба стартовых B12-теста убираются из автоматических предложений: один не предлагается только потому, что отсутствует другой.</p>
+<p>Результат включает до 3 conclusions, до 4 next_step items и до 4 data_gap items. Это три группы, а не 20 фраз одновременно. Data_gap добавляет причины недостатка данных; topic=model_limited дополнительно включает причины модельного ограничения. Warnings всегда содержит статус черновика.</p>
+<p>Frontend показывает «Что удалось оценить», «Полнота данных/Недостаточно данных» и «Следующие шаги» отдельно. JSON/PDF/печать сохраняют ограничения вместе с выводом. Нет удаления предупреждения ради более определённого текста.</p>
+<h2>Пограничные примеры</h2>
+<p>Hb ровно 120 у F или 130 у M не ниже порога: анемия false, фразы должны использовать соответствующую формулировку. Normal Hb не исключает скрытые дефициты. Если есть положительный B12 при normal Hb и согласованный class, допустима фраза о дефиците без анемии. Если введён один Hb, specific cause-фразы подавляются, остаются Hb/общие шаги/ограничения.</p>
+<p>iron_deficiency_anemia с Hb без анемии — конфликт; mixed_deficiency с явно одним компонентом — конфликт; anemia_other с положительным дефицитом — конфликт; latent_deficiency с явно пустым deficits — конфликт; inflammation=true без анемии — конфликт. Класс B6/copper сам по себе не определяет статус анемии. Сочетание iron+воспалительная цель при анемии допустимо как гипотеза, но совместное распознавание не валидировано данными кейса.</p>
+<p>Когда вердикт uncertain, низкий maximum class score или sparse, специфические выводы не показываются. Нельзя переименовать неопределённость в отсутствие дефицита, назначить anemia_other по пропускам или вычислить вероятность mixed произведением scores.</p>
+<h2>Сохранение и изменение</h2>
+<p>При predict отчёт получает recommendationSnapshot. Обычный POST recommendations возвращает этот снимок, поэтому правка каталога не меняет прежние формулировки. Новые расчёты используют новую версию. Роли запроса и сохранённого отчёта должны совпасть, иначе 409.</p>
+<p>При редактировании каталога меняйте обе роли осмысленно, повышайте version, сохраняйте draft до реального медицинского review, проверяйте уникальные IDs, 20 элементов, все условия/источники и корректность suggestedFeatures. Тестируйте матрицу 12 классов × обе роли, границы Hb, малые панели, противоречия и альтернативы B12. Обновляйте PROJECT_CONTEXT и описание. Не меняйте weights или пороги ради того, чтобы конкретная фраза чаще показывалась.</p>
+<h2>Дополнительный phrase file</h2>
+<p>--phrase-file поддерживает прежний формат: version, reviewed:true, items. Каждый item имеет уникальный id, text, audience patient/doctor/both и when, допускающий только anemia. Такой файл заменяет следующие шаги, но оставляет черновые conclusions, полноту и предупреждения основного каталога. Маркер reviewed:true — техническое условие, не доказательство клинического review. Пустой/неподтверждённый/невалидный файл приводит к 503 при получении рекомендаций. Обычный запуск не нуждается в этом override.</p>
+<h2>Полные каталоги и политика</h2>
+<p>Ниже приведены все фразы с реальными условиями и приоритетами. Это снимок исходных JSON на дату передачи; при дальнейшем изменении JSON документацию нужно обновить. Полные JSON в backend/data остаются источником реализации.</p>
+<h2>Правки медицинской команды — 2026-10-04</h2>
+<p>Источник — «Корректировка текста.docx»; неизменённая копия: <code>data/reference/medical_text_corrections_2026-10-04.docx</code>, SHA-256 в <code>catalog.sources.medical_team</code>. По порядку первых 12 тем документа обновлены 11 тем обеих ролей; у latent правок нет. Темы 13–20 и условия выбора сохранены. Добавленные списки исследований отражают редакционные предложения команды; не приписываются автоматически NICE/BSG/WHO. Статус draft сохранён: частичная редактура не подтверждает клиническую валидацию модели, правил покрытия и всех 40 фраз.</p>
+<p>Интерпретации неоднозначностей:</p>
+<ul>
+<li>«Креатин» трактован как креатинин (<code>creatinine</code>) по контексту eGFR; это предположение требует подтверждения команды.</li>
+<li>Общий B12 указан приоритетно в пациентском тексте, активный — альтернативой. Уже введённый общий или активный B12 исключает предложение другого из suggestedFeatures. Оба не назначаются автоматически; NICE NG239 1.3.1 допускает один из них для начального исследования.</li>
+<li>«Hb в норме / выше порога» заменено на «не ниже порога анемии»: равенство 120/130 не считается анемией; верхняя граница нормы сервисом не проверяется.</li>
+<li>B9 и фолаты объединены в один анализ. «Билирубин» в документе сохранён как общий термин; в suggestedFeatures доступен только <code>indirect_bilirubin</code> (непрямой билирубин), не общий билирубин.</li>
+<li>Списки анализов предложены для обсуждения с врачом и сверки с имеющимися результатами. MMA остаётся опциональным; suggestedFeatures содержит лишь отсутствующие входы. Полный список в тексте служит контекстом интерпретации, а не утверждением, что каждый анализ отсутствует или нужен заново.</li>
+<li>Двойное предложение о B12 в пациентском тексте убрано: предполагаемое состояние уже выводится отдельным заголовком сайта.</li>
+</ul>
+<p>Новые расчёты используют версию 1.2. Сохранённые снимки рекомендаций остаются с исходной версией; чтобы увидеть новые тексты, нужен новый расчёт.</p>
+<h3>Каталог пациента</h3>
+<h4>patient.hb_low</h4>
+<p>Гемоглобин ниже порога.</p>
+<p>Тип: <code>conclusion</code>. Тема: <code>hb_low</code>. Приоритет: 100.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;anemia&quot;: true
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: case, medical_team.</p>
+<h4>patient.hb_not_low</h4>
+<p>Гемоглобин не ниже порогового значения для анемии. Это не исключает дефициты железа или витаминов.</p>
+<p>Тип: <code>conclusion</code>. Тема: <code>hb_not_low</code>. Приоритет: 100.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;anemia&quot;: false
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: case, nice_b12, medical_team.</p>
+<h4>patient.iron</h4>
+<p>Предполагаемый дефицит железа. Обсудите с врачом дальнейший план обследования для выявления причины. Препараты и их дозировку должен назначать врач. Для уточнения причины рекомендуется обсудить анализы на LDH, билирубин, гаптоглобин, ретикулоциты, RDW, ферритин, TSAT, sTfR, CRP и показатели MCH/MCHC или свериться с уже имеющимися результатами на приёме у врача.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>iron</code>. Приоритет: 90.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;deficit&quot;: &quot;iron&quot;,
+  &quot;maxDeficits&quot;: 1
+}</code></pre>
+<p>Предлагаемые поля: LDH, indirect_bilirubin, haptoglobin, reticulocytes, RDW, ferritin, TSAT, sTfR, CRP, MCH, MCHC. Источники: bsg_iron, medical_team.</p>
+<h4>patient.B12</h4>
+<p>Обсудите с врачом результаты B12, симптомы и принимаемые добавки. Рекомендуется оценить общий B12 (приоритетно; активный B12 — альтернатива), фолаты, креатинин, eGFR, ферритин, TSAT, CRP и ретикулоциты; MMA — по необходимости. Сверьтесь с уже имеющимися результатами и обсудите сдачу недостающих анализов.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>B12</code>. Приоритет: 90.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;deficit&quot;: &quot;B12&quot;,
+  &quot;maxDeficits&quot;: 1
+}</code></pre>
+<p>Предлагаемые поля: vitamin_B12, active_B12, folate, creatinine, eGFR, ferritin, TSAT, CRP, reticulocytes, MMA. Источники: nice_b12, medical_team.</p>
+<h4>patient.folate</h4>
+<p>Обсудите с врачом результаты анализов фолатов и B12. Рекомендуется оценить фолаты, B12, креатинин, eGFR, ферритин, TSAT, CRP и гомоцистеин; MMA — по необходимости. Сверьтесь с уже имеющимися результатами на приёме у врача и обсудите сдачу недостающих анализов.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>folate</code>. Приоритет: 90.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;deficit&quot;: &quot;folate&quot;,
+  &quot;maxDeficits&quot;: 1
+}</code></pre>
+<p>Предлагаемые поля: folate, vitamin_B12, creatinine, eGFR, ferritin, TSAT, CRP, homocysteine, MMA. Источники: case, workflow, medical_team.</p>
+<h4>patient.B6</h4>
+<p>Модель допускает недостаток B6. Обсудите с врачом результаты B6, ферритина, TSAT, CRP и RDW; при необходимости — сдачу недостающих анализов. Этот вывод сам по себе не является назначением добавок.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>B6</code>. Приоритет: 90.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;deficit&quot;: &quot;B6&quot;,
+  &quot;maxDeficits&quot;: 1
+}</code></pre>
+<p>Предлагаемые поля: vitamin_B6, ferritin, TSAT, CRP, RDW. Источники: case, workflow, medical_team.</p>
+<h4>patient.copper</h4>
+<p>Модель допускает недостаток меди. Обсудите с врачом результаты меди, церулоплазмина, B6, ферритина, TSAT, CRP, B12 и фолатов; при необходимости — сдачу недостающих анализов.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>copper</code>. Приоритет: 90.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;deficit&quot;: &quot;copper&quot;,
+  &quot;maxDeficits&quot;: 1
+}</code></pre>
+<p>Предлагаемые поля: copper, ceruloplasmin, vitamin_B6, ferritin, TSAT, CRP, vitamin_B12, folate. Источники: case, workflow, medical_team.</p>
+<h4>patient.mixed</h4>
+<p>Модель допускает сочетание дефицитов: {deficits}. Обсудите их вместе с врачом. Рекомендуется оценить B12, фолаты (витамин B9), сывороточное железо, ферритин, TSAT, CRP, ретикулоциты, RDW и sTfR; свериться с имеющимися результатами и обсудить сдачу недостающих анализов.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>mixed</code>. Приоритет: 95.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;mixed&quot;: true
+}</code></pre>
+<p>Предлагаемые поля: vitamin_B12, folate, serum_iron, ferritin, TSAT, CRP, reticulocytes, RDW, sTfR. Источники: case, workflow, medical_team.</p>
+<h4>patient.inflammation</h4>
+<p>Модель допускает связь анемии с воспалением. Обсудите с врачом ферритин, TSAT, CRP, ретикулоциты, RDW и sTfR, включая необходимость недостающих анализов: воспаление и дефицит железа могут сочетаться.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>inflammation</code>. Приоритет: 85.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;inflammation&quot;: true,
+  &quot;anemia&quot;: true
+}</code></pre>
+<p>Предлагаемые поля: ferritin, TSAT, CRP, reticulocytes, RDW, sTfR. Источники: who_ferritin, medical_team.</p>
+<h4>patient.other</h4>
+<p>Модель не уточнила причину анемии. Для уточнения рекомендуется оценить ферритин, TSAT, CRP, креатинин, eGFR, ретикулоциты, RDW, B12, фолаты и гомоцистеин; MMA — по необходимости. Обсудите с врачом уже имеющиеся результаты и сдачу недостающих анализов. Возможна анемия неясного генеза; результаты необходимо сопоставить с симптомами и инструментальной диагностикой.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>other</code>. Приоритет: 85.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;anemiaClass&quot;: &quot;anemia_other&quot;
+}</code></pre>
+<p>Предлагаемые поля: ferritin, TSAT, CRP, creatinine, eGFR, reticulocytes, RDW, vitamin_B12, MMA, folate, homocysteine. Источники: case, workflow, medical_team.</p>
+<h4>patient.latent</h4>
+<p>Гемоглобин не ниже порога анемии, но модель допускает дефицитное состояние. Такой вывод требует отдельной проверки.</p>
+<p>Тип: <code>conclusion</code>. Тема: <code>latent</code>. Приоритет: 80.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;nonAnemicDeficit&quot;: true
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: case, nice_b12.</p>
+<h4>patient.ferritin_context</h4>
+<p>Ферритин и показатель воспаления уже добавлены. Обсудите их вместе с врачом: воспаление может влиять на ферритин. Для уточнения картины рекомендуется оценить ретикулоциты, RDW, sTfR и TSAT; при необходимости — обсудить сдачу недостающих анализов.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>ferritin_context</code>. Приоритет: 70.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;presentAll&quot;: [
+    &quot;ferritin&quot;,
+    &quot;CRP&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: reticulocytes, RDW, sTfR, TSAT. Источники: who_ferritin, medical_team.</p>
+<h4>patient.vitamin_context</h4>
+<p>Результаты B12 и фолатов уже добавлены. Передайте врачу оба бланка и сведения о добавках, чтобы обсуждать их вместе.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>vitamin_context</code>. Приоритет: 65.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;presentAll&quot;: [
+    &quot;folate&quot;
+  ],
+  &quot;presentAny&quot;: [
+    &quot;vitamin_B12&quot;,
+    &quot;active_B12&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: nice_b12, workflow.</p>
+<h4>patient.sparse</h4>
+<p>Данных недостаточно для вывода о причинах и дефицитах. Пустые поля не считаются нормальными результатами; дополнительные исследования обсудите с врачом.</p>
+<p>Тип: <code>data_gap</code>. Тема: <code>sparse</code>. Приоритет: 100.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;dataLevels&quot;: [
+    &quot;insufficient&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: workflow.</p>
+<h4>patient.cbc_gap</h4>
+<p>Не хватает части показателей общего анализа крови. Если у вас уже есть полный бланк, добавьте недостающие значения; необходимость нового анализа обсудите с врачом.</p>
+<p>Тип: <code>data_gap</code>. Тема: <code>cbc_gap</code>. Приоритет: 90.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;missingAny&quot;: [
+    &quot;MCV&quot;,
+    &quot;MCH&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: MCV, MCH. Источники: workflow.</p>
+<h4>patient.iron_gap</h4>
+<p>Ферритин не указан, поэтому сведения о запасах железа ограничены. Обсудите с врачом, нужно ли добавлять этот анализ.</p>
+<p>Тип: <code>data_gap</code>. Тема: <code>iron_gap</code>. Приоритет: 80.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;missingAny&quot;: [
+    &quot;ferritin&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: ferritin. Источники: bsg_iron.</p>
+<h4>patient.vitamin_gap</h4>
+<p>Нет части результатов для оценки B12 или фолатов. Врач поможет решить, нужны ли эти исследования с учётом симптомов и уже выполненных анализов.</p>
+<p>Тип: <code>data_gap</code>. Тема: <code>vitamin_gap</code>. Приоритет: 75.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;missingGroupsAny&quot;: [
+    &quot;B12&quot;,
+    &quot;folate&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: vitamin_B12, folate. Источники: nice_b12, workflow.</p>
+<h4>patient.model_absent</h4>
+<p>Сейчас сервис оценивает только порог гемоглобина. Прогноз дефицитов ещё недоступен.</p>
+<p>Тип: <code>conclusion</code>. Тема: <code>model_absent</code>. Приоритет: 60.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;modelStates&quot;: [
+    &quot;not_connected&quot;,
+    &quot;missing_verdict&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: workflow.</p>
+<h4>patient.model_limited</h4>
+<p>Вывод модели о причине ограничен: данных мало, результат неопределён или противоречив. Требуется проверка, а не выбор лечения по этому отчёту.</p>
+<p>Тип: <code>conclusion</code>. Тема: <code>model_limited</code>. Приоритет: 65.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;modelStates&quot;: [
+    &quot;uncertain&quot;,
+    &quot;out_of_scope&quot;,
+    &quot;inconsistent&quot;,
+    &quot;suppressed_sparse&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: workflow.</p>
+<h4>patient.follow_up</h4>
+<p>Сохраните бланки и даты исследований для обсуждения с врачом. Какие анализы повторять и когда, зависит от вашей ситуации.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>follow_up</code>. Приоритет: 10.</p>
+<p>Условия:</p>
+<pre><code>{}</code></pre>
+<p>Предлагаемые поля: нет. Источники: workflow.</p>
+<p>Источники каталога:</p>
+<pre><code>{
+  &quot;case&quot;: {
+    &quot;title&quot;: &quot;Кейс Сеченовского университета и RELEASE_NOTES.md&quot;,
+    &quot;path&quot;: &quot;RELEASE_NOTES.md&quot;
+  },
+  &quot;workflow&quot;: {
+    &quot;title&quot;: &quot;Редакционные правила прототипа; не клиническая рекомендация&quot;
+  },
+  &quot;nice_b12&quot;: {
+    &quot;title&quot;: &quot;NICE NG239, sections 1.2-1.3&quot;,
+    &quot;url&quot;: &quot;https://www.nice.org.uk/guidance/ng239/chapter/Recommendations&quot;
+  },
+  &quot;bsg_iron&quot;: {
+    &quot;title&quot;: &quot;BSG guidelines: iron deficiency anaemia in adults, 2021&quot;,
+    &quot;url&quot;: &quot;https://www.bsg.org.uk/getmedia/3e13dd5c-8e7b-4110-87c5-dcc1feee495d/Iron-Deficiency-Aneamia-in-Adults.pdf&quot;
+  },
+  &quot;who_ferritin&quot;: {
+    &quot;title&quot;: &quot;WHO ferritin guideline, executive summary, 2020&quot;,
+    &quot;url&quot;: &quot;https://www.who.int/docs/default-source/micronutrients/ferritin-guideline/ferritin-guidelines-executivesummary.pdf&quot;
+  },
+  &quot;medical_team&quot;: {
+    &quot;title&quot;: &quot;Правки медицинской команды: Корректировка текста.docx, 2026-10-04&quot;,
+    &quot;path&quot;: &quot;data/reference/medical_text_corrections_2026-10-04.docx&quot;,
+    &quot;sha256&quot;: &quot;86c60a245fb4964c76c9c755ca06eadaa1f0d9e972aec95dec8ea064f84e3835&quot;
+  }
+}</code></pre>
+<h3>Каталог врача</h3>
+<h4>doctor.hb_low</h4>
+<p>Hb ниже порога для указанного пола. Этиология анемии не устанавливается по одному Hb; сопоставьте результат с клиникой и остальными исследованиями.</p>
+<p>Тип: <code>conclusion</code>. Тема: <code>hb_low</code>. Приоритет: 100.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;anemia&quot;: true
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: case, medical_team.</p>
+<h4>doctor.hb_not_low</h4>
+<p>Hb не ниже порога анемии. Отсутствие анемии не является основанием исключать нутритивные дефициты.</p>
+<p>Тип: <code>conclusion</code>. Тема: <code>hb_not_low</code>. Приоритет: 100.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;anemia&quot;: false
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: case, nice_b12, medical_team.</p>
+<h4>doctor.iron</h4>
+<p>Рекомендуется проверить наличие железодефицита по маркерам обмена железа и оценить возможные причины, включая кровопотери и нарушение всасывания, с учётом анамнеза. Обратите внимание на результаты LDH, билирубина, гаптоглобина, ретикулоцитов, RDW, ферритина, TSAT, sTfR и CRP для уточнения причины патологии.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>iron</code>. Приоритет: 90.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;deficit&quot;: &quot;iron&quot;,
+  &quot;maxDeficits&quot;: 1
+}</code></pre>
+<p>Предлагаемые поля: LDH, indirect_bilirubin, haptoglobin, reticulocytes, RDW, ferritin, TSAT, sTfR, CRP, MCH, MCHC. Источники: bsg_iron, medical_team.</p>
+<h4>doctor.B12</h4>
+<p>Предполагаемый моделью B12-дефицит требует сопоставления с симптомами, факторами риска и общим или активным B12. При неопределённом результате рекомендуется рассмотреть MMA (опционально), eGFR и креатинин.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>B12</code>. Приоритет: 90.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;deficit&quot;: &quot;B12&quot;,
+  &quot;maxDeficits&quot;: 1
+}</code></pre>
+<p>Предлагаемые поля: vitamin_B12, active_B12, folate, creatinine, eGFR, ferritin, TSAT, CRP, reticulocytes, MMA. Источники: nice_b12, medical_team.</p>
+<h4>doctor.folate</h4>
+<p>При предположении фолатного дефицита сопоставьте результаты фолатов, B12, креатинина, eGFR, ферритина, TSAT, CRP и гомоцистеина; MMA — опционально.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>folate</code>. Приоритет: 90.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;deficit&quot;: &quot;folate&quot;,
+  &quot;maxDeficits&quot;: 1
+}</code></pre>
+<p>Предлагаемые поля: folate, vitamin_B12, creatinine, eGFR, ferritin, TSAT, CRP, homocysteine, MMA. Источники: case, workflow, medical_team.</p>
+<h4>doctor.B6</h4>
+<p>Предполагаемый моделью B6-дефицит сопоставьте с анамнезом и другими анализами. Рекомендуется оценить результаты B6, ферритина, TSAT, CRP и RDW; при необходимости — назначить недостающие исследования.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>B6</code>. Приоритет: 90.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;deficit&quot;: &quot;B6&quot;,
+  &quot;maxDeficits&quot;: 1
+}</code></pre>
+<p>Предлагаемые поля: vitamin_B6, ferritin, TSAT, CRP, RDW. Источники: case, workflow, medical_team.</p>
+<h4>doctor.copper</h4>
+<p>При модельном предположении дефицита меди рекомендуется оценить медь, церулоплазмин, B6, ферритин, TSAT, CRP, B12 и фолаты, назначить недостающие исследования по показаниям и сопоставить результаты с инструментальной диагностикой.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>copper</code>. Приоритет: 90.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;deficit&quot;: &quot;copper&quot;,
+  &quot;maxDeficits&quot;: 1
+}</code></pre>
+<p>Предлагаемые поля: copper, ceruloplasmin, vitamin_B6, ferritin, TSAT, CRP, vitamin_B12, folate. Источники: case, workflow, medical_team.</p>
+<h4>doctor.mixed</h4>
+<p>Модель допускает сочетанный дефицит ({deficits}). Сопоставьте результат с анамнезом, симптомами и инструментальным обследованием для оценки возможных внутренних кровотечений. Рекомендуется оценить B12, фолаты (витамин B9), сывороточное железо, ферритин, TSAT, CRP, ретикулоциты, RDW и sTfR; при необходимости — назначить недостающие исследования.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>mixed</code>. Приоритет: 95.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;mixed&quot;: true
+}</code></pre>
+<p>Предлагаемые поля: vitamin_B12, folate, serum_iron, ferritin, TSAT, CRP, reticulocytes, RDW, sTfR. Источники: case, workflow, medical_team.</p>
+<h4>doctor.inflammation</h4>
+<p>При модельном предположении воспалительного компонента сопоставьте маркеры воспаления и обмена железа. Рекомендуется оценить ферритин, TSAT, CRP, ретикулоциты, RDW и sTfR; при необходимости — назначить недостающие исследования. Наличие воспаления не исключает одновременный железодефицит.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>inflammation</code>. Приоритет: 85.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;inflammation&quot;: true,
+  &quot;anemia&quot;: true
+}</code></pre>
+<p>Предлагаемые поля: ferritin, TSAT, CRP, reticulocytes, RDW, sTfR. Источники: who_ferritin, medical_team.</p>
+<h4>doctor.other</h4>
+<p>Категория anemia_other не подтверждает анемию неясного генеза после полного обследования. Продолжите дифференциальную оценку с учётом анамнеза, симптомов и инструментальной диагностики. Рекомендуется оценить ферритин, TSAT, CRP, креатинин, eGFR, ретикулоциты, RDW, B12, фолаты и гомоцистеин; MMA — опционально. При необходимости назначьте недостающие исследования.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>other</code>. Приоритет: 85.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;anemiaClass&quot;: &quot;anemia_other&quot;
+}</code></pre>
+<p>Предлагаемые поля: ferritin, TSAT, CRP, creatinine, eGFR, reticulocytes, RDW, vitamin_B12, MMA, folate, homocysteine. Источники: case, workflow, medical_team.</p>
+<h4>doctor.latent</h4>
+<p>Модель допускает дефицит без анемии. Нормальный Hb не отменяет верификацию соответствующих нутритивных гипотез.</p>
+<p>Тип: <code>conclusion</code>. Тема: <code>latent</code>. Приоритет: 80.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;nonAnemicDeficit&quot;: true
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: case, nice_b12.</p>
+<h4>doctor.ferritin_context</h4>
+<p>Ферритин и CRP доступны; интерпретируйте ферритин с учётом воспалительного контекста, клиники и лабораторных референсов. Рекомендуется оценить ретикулоциты, RDW, sTfR и TSAT; при необходимости — назначить недостающие исследования.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>ferritin_context</code>. Приоритет: 70.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;presentAll&quot;: [
+    &quot;ferritin&quot;,
+    &quot;CRP&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: reticulocytes, RDW, sTfR, TSAT. Источники: who_ferritin, medical_team.</p>
+<h4>doctor.vitamin_context</h4>
+<p>Общий или активный B12 и фолаты представлены одновременно. Сопоставьте методы, единицы, даты и сведения о приёме добавок; наличие анализов не подтверждает дефицит.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>vitamin_context</code>. Приоритет: 65.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;presentAll&quot;: [
+    &quot;folate&quot;
+  ],
+  &quot;presentAny&quot;: [
+    &quot;vitamin_B12&quot;,
+    &quot;active_B12&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: nice_b12, workflow.</p>
+<h4>doctor.sparse</h4>
+<p>Малая панель ограничивает этиологический вывод. Пропуски не являются отрицательными результатами, а количество заполненных полей не является уверенностью модели.</p>
+<p>Тип: <code>data_gap</code>. Тема: <code>sparse</code>. Приоритет: 100.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;dataLevels&quot;: [
+    &quot;insufficient&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: workflow.</p>
+<h4>doctor.cbc_gap</h4>
+<p>Отсутствуют MCV и/или MCH, необходимые для контекста эритроцитарных индексов в прототипе. Восстановите доступные результаты ОАК; это не автоматическое назначение нового исследования.</p>
+<p>Тип: <code>data_gap</code>. Тема: <code>cbc_gap</code>. Приоритет: 90.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;missingAny&quot;: [
+    &quot;MCV&quot;,
+    &quot;MCH&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: MCV, MCH. Источники: workflow.</p>
+<h4>doctor.iron_gap</h4>
+<p>Ферритин отсутствует; оценка запасов железа ограничена. Рассмотрите необходимость железной панели в клиническом контексте, не трактуя пропуск как отсутствие дефицита.</p>
+<p>Тип: <code>data_gap</code>. Тема: <code>iron_gap</code>. Приоритет: 80.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;missingAny&quot;: [
+    &quot;ferritin&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: ferritin. Источники: bsg_iron.</p>
+<h4>doctor.vitamin_gap</h4>
+<p>Нет общего/активного B12 и/или фолатов. Уточните показания к этим исследованиям по клинике и факторам риска; полный список 35 показателей не требуется автоматически.</p>
+<p>Тип: <code>data_gap</code>. Тема: <code>vitamin_gap</code>. Приоритет: 75.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;missingGroupsAny&quot;: [
+    &quot;B12&quot;,
+    &quot;folate&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: vitamin_B12, folate. Источники: nice_b12, workflow.</p>
+<h4>doctor.model_absent</h4>
+<p>Вердикт обученной модели недоступен. Результат правила Hb и покрытие панели не заменяют прогноз дефицитов или причин анемии.</p>
+<p>Тип: <code>conclusion</code>. Тема: <code>model_absent</code>. Приоритет: 60.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;modelStates&quot;: [
+    &quot;not_connected&quot;,
+    &quot;missing_verdict&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: workflow.</p>
+<h4>doctor.model_limited</h4>
+<p>Этиологический вердикт не используется из-за недостаточных данных, неопределённости, выхода за область применимости или несогласованности. Проверьте причину ограничения.</p>
+<p>Тип: <code>conclusion</code>. Тема: <code>model_limited</code>. Приоритет: 65.</p>
+<p>Условия:</p>
+<pre><code>{
+  &quot;modelStates&quot;: [
+    &quot;uncertain&quot;,
+    &quot;out_of_scope&quot;,
+    &quot;inconsistent&quot;,
+    &quot;suppressed_sparse&quot;
+  ]
+}</code></pre>
+<p>Предлагаемые поля: нет. Источники: workflow.</p>
+<h4>doctor.follow_up</h4>
+<p>Сопоставьте бланки, даты, симптомы и предшествующую терапию. Состав и сроки повторных исследований определяются индивидуально; пакет разных дат не считается одним моментом обследования.</p>
+<p>Тип: <code>next_step</code>. Тема: <code>follow_up</code>. Приоритет: 10.</p>
+<p>Условия:</p>
+<pre><code>{}</code></pre>
+<p>Предлагаемые поля: нет. Источники: workflow.</p>
+<p>Источники каталога:</p>
+<pre><code>{
+  &quot;case&quot;: {
+    &quot;title&quot;: &quot;Кейс Сеченовского университета и RELEASE_NOTES.md&quot;,
+    &quot;path&quot;: &quot;RELEASE_NOTES.md&quot;
+  },
+  &quot;workflow&quot;: {
+    &quot;title&quot;: &quot;Редакционные правила прототипа; не клиническая рекомендация&quot;
+  },
+  &quot;nice_b12&quot;: {
+    &quot;title&quot;: &quot;NICE NG239, sections 1.2-1.3&quot;,
+    &quot;url&quot;: &quot;https://www.nice.org.uk/guidance/ng239/chapter/Recommendations&quot;
+  },
+  &quot;bsg_iron&quot;: {
+    &quot;title&quot;: &quot;BSG guidelines: iron deficiency anaemia in adults, 2021&quot;,
+    &quot;url&quot;: &quot;https://www.bsg.org.uk/getmedia/3e13dd5c-8e7b-4110-87c5-dcc1feee495d/Iron-Deficiency-Aneamia-in-Adults.pdf&quot;
+  },
+  &quot;who_ferritin&quot;: {
+    &quot;title&quot;: &quot;WHO ferritin guideline, executive summary, 2020&quot;,
+    &quot;url&quot;: &quot;https://www.who.int/docs/default-source/micronutrients/ferritin-guideline/ferritin-guidelines-executivesummary.pdf&quot;
+  },
+  &quot;medical_team&quot;: {
+    &quot;title&quot;: &quot;Правки медицинской команды: Корректировка текста.docx, 2026-10-04&quot;,
+    &quot;path&quot;: &quot;data/reference/medical_text_corrections_2026-10-04.docx&quot;,
+    &quot;sha256&quot;: &quot;86c60a245fb4964c76c9c755ca06eadaa1f0d9e972aec95dec8ea064f84e3835&quot;
+  }
+}</code></pre></main></body></html>

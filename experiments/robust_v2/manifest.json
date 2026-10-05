@@ -1,0 +1,103 @@
+{
+  "model_family": "robust_v2",
+  "source_sha256": "9d97e125c961a92222eb31c86188ba7a7736ece1ba59ce296d32e300b107dbb6",
+  "dictionary_sha256": "3d01da624a1b0ea5c205a11b4fed8222327cc4b9206185f1125e263c93be03b8",
+  "development_n": 672,
+  "holdout_n": 168,
+  "baseline": "./experiments/baseline_v1",
+  "seed": 20261003,
+  "folds": 5,
+  "new_configs": [
+    {
+      "algorithm": "advanced",
+      "name": "augmented_catboost",
+      "kind": "catboost",
+      "panel": "extended",
+      "augment": true
+    },
+    {
+      "algorithm": "advanced",
+      "name": "balanced_catboost",
+      "kind": "catboost",
+      "panel": "extended",
+      "augment": true,
+      "balanced": true
+    },
+    {
+      "algorithm": "advanced",
+      "name": "augmented_trees",
+      "kind": "trees",
+      "panel": "extended",
+      "augment": true
+    },
+    {
+      "algorithm": "advanced",
+      "name": "panel_expert",
+      "kind": "catboost",
+      "panel": "extended",
+      "augment": true,
+      "expert": true
+    },
+    {
+      "algorithm": "advanced",
+      "name": "balanced_catboost_cbc",
+      "kind": "catboost",
+      "panel": "cbc",
+      "augment": true,
+      "balanced": true
+    },
+    {
+      "algorithm": "advanced",
+      "name": "balanced_trees_cbc",
+      "kind": "trees",
+      "panel": "cbc",
+      "augment": true,
+      "balanced": true
+    }
+  ],
+  "started_at": "2026-10-04T22:44:03.798504+03:00",
+  "binary_threshold": 0.5,
+  "selection_scenarios": [
+    "available",
+    "drop30",
+    "drop60"
+  ],
+  "cbc_selection_scenarios": [
+    "cbc_only"
+  ],
+  "replacement_guards": {
+    "minimum_cv_f1_gain": 0.01,
+    "maximum_natural_f1_loss": 0.02,
+    "maximum_precision_loss": 0.1,
+    "maximum_specificity_loss": 0.02
+  },
+  "external_training": false,
+  "calibrated": false,
+  "holdout_is_reused": true,
+  "holdout_warning": "Previously inspected in v1; repeated comparison is not fresh independent validation.",
+  "selection_warning": "Candidate ranking and OOF reporting share folds; selected CV scores can be optimistic.",
+  "code_sha256": {
+    "advanced.py": "175d796f08bfbf1404ee30270011be02cfff321fbe66f8afb99bb9bb5fa5511e",
+    "predict.py": "38affd68eeec1891ff777272b8767211a1dedf5a4d7f66d11a4e206d7448f245",
+    "__init__.py": "9a5107d9d3e4c5c9ce64dbc9a9ce067d5a01d1540a1758db1d5f4626fef79e94",
+    "core.py": "84d7668cfaaced184bbc506eced55e1434844472b02d494c3a42f8776caae3c8",
+    "improvement_report.py": "92b704f98823e57a9993dc30913e6cac54eccfb00cccf2a8aceeb82566a7a511",
+    "improve.py": "441c63c2013b04fe299858a2ca235d9a3cec2310430735ed5ec2bbb2c59c19ac",
+    "train.py": "e524eb76911fa4d59e71d66337b73787593d99b00ca52eaaad42c56efed264e4",
+    "report.py": "532fd2adb52950b05d247807b6b41da0d28eeb0cb8f982507efcf62abe2337fb"
+  },
+  "elapsed_seconds": 183.9108837920012,
+  "finished_at": "2026-10-04T22:47:07.709851+03:00",
+  "source_path": "data/case/deficiency_anemia.csv",
+  "versions": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.9.1",
+    "catboost": "1.2.10",
+    "joblib": "1.6.0",
+    "matplotlib": "3.11.2"
+  },
+  "python": "3.12.14",
+  "split_sha256": "8d1476de4100b67c3634c6e2c1958e304c4d353f0cadc24c775d1ad92d0de8ae",
+  "scenario_generation": "baseline seed+100+scenario index; identical to baseline_v1"
+}

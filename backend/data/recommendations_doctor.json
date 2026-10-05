@@ -1,0 +1,481 @@
+{
+  "schemaVersion": "2.0",
+  "version": "phrases-draft-1.2",
+  "clinicalReviewStatus": "draft",
+  "audience": "doctor",
+  "sources": {
+    "case": {
+      "title": "Кейс Сеченовского университета и RELEASE_NOTES.md",
+      "path": "RELEASE_NOTES.md"
+    },
+    "workflow": {
+      "title": "Редакционные правила прототипа; не клиническая рекомендация"
+    },
+    "nice_b12": {
+      "title": "NICE NG239, sections 1.2-1.3",
+      "url": "https://www.nice.org.uk/guidance/ng239/chapter/Recommendations"
+    },
+    "bsg_iron": {
+      "title": "BSG guidelines: iron deficiency anaemia in adults, 2021",
+      "url": "https://www.bsg.org.uk/getmedia/3e13dd5c-8e7b-4110-87c5-dcc1feee495d/Iron-Deficiency-Aneamia-in-Adults.pdf"
+    },
+    "who_ferritin": {
+      "title": "WHO ferritin guideline, executive summary, 2020",
+      "url": "https://www.who.int/docs/default-source/micronutrients/ferritin-guideline/ferritin-guidelines-executivesummary.pdf"
+    },
+    "medical_team": {
+      "title": "Правки медицинской команды: Корректировка текста.docx, 2026-10-04",
+      "path": "data/reference/medical_text_corrections_2026-10-04.docx",
+      "sha256": "86c60a245fb4964c76c9c755ca06eadaa1f0d9e972aec95dec8ea064f84e3835"
+    }
+  },
+  "items": [
+    {
+      "id": "doctor.hb_low",
+      "topic": "hb_low",
+      "kind": "conclusion",
+      "priority": 100,
+      "when": {
+        "anemia": true
+      },
+      "sourceIds": [
+        "case",
+        "medical_team"
+      ],
+      "suggestedFeatures": [],
+      "text": "Hb ниже порога для указанного пола. Этиология анемии не устанавливается по одному Hb; сопоставьте результат с клиникой и остальными исследованиями."
+    },
+    {
+      "id": "doctor.hb_not_low",
+      "topic": "hb_not_low",
+      "kind": "conclusion",
+      "priority": 100,
+      "when": {
+        "anemia": false
+      },
+      "sourceIds": [
+        "case",
+        "nice_b12",
+        "medical_team"
+      ],
+      "suggestedFeatures": [],
+      "text": "Hb не ниже порога анемии. Отсутствие анемии не является основанием исключать нутритивные дефициты."
+    },
+    {
+      "id": "doctor.iron",
+      "topic": "iron",
+      "kind": "next_step",
+      "priority": 90,
+      "when": {
+        "deficit": "iron",
+        "maxDeficits": 1
+      },
+      "sourceIds": [
+        "bsg_iron",
+        "medical_team"
+      ],
+      "suggestedFeatures": [
+        "LDH",
+        "indirect_bilirubin",
+        "haptoglobin",
+        "reticulocytes",
+        "RDW",
+        "ferritin",
+        "TSAT",
+        "sTfR",
+        "CRP",
+        "MCH",
+        "MCHC"
+      ],
+      "text": "Рекомендуется проверить наличие железодефицита по маркерам обмена железа и оценить возможные причины, включая кровопотери и нарушение всасывания, с учётом анамнеза. Обратите внимание на результаты LDH, билирубина, гаптоглобина, ретикулоцитов, RDW, ферритина, TSAT, sTfR и CRP для уточнения причины патологии."
+    },
+    {
+      "id": "doctor.B12",
+      "topic": "B12",
+      "kind": "next_step",
+      "priority": 90,
+      "when": {
+        "deficit": "B12",
+        "maxDeficits": 1
+      },
+      "sourceIds": [
+        "nice_b12",
+        "medical_team"
+      ],
+      "suggestedFeatures": [
+        "vitamin_B12",
+        "active_B12",
+        "folate",
+        "creatinine",
+        "eGFR",
+        "ferritin",
+        "TSAT",
+        "CRP",
+        "reticulocytes",
+        "MMA"
+      ],
+      "text": "Предполагаемый моделью B12-дефицит требует сопоставления с симптомами, факторами риска и общим или активным B12. При неопределённом результате рекомендуется рассмотреть MMA (опционально), eGFR и креатинин."
+    },
+    {
+      "id": "doctor.folate",
+      "topic": "folate",
+      "kind": "next_step",
+      "priority": 90,
+      "when": {
+        "deficit": "folate",
+        "maxDeficits": 1
+      },
+      "sourceIds": [
+        "case",
+        "workflow",
+        "medical_team"
+      ],
+      "suggestedFeatures": [
+        "folate",
+        "vitamin_B12",
+        "creatinine",
+        "eGFR",
+        "ferritin",
+        "TSAT",
+        "CRP",
+        "homocysteine",
+        "MMA"
+      ],
+      "text": "При предположении фолатного дефицита сопоставьте результаты фолатов, B12, креатинина, eGFR, ферритина, TSAT, CRP и гомоцистеина; MMA — опционально."
+    },
+    {
+      "id": "doctor.B6",
+      "topic": "B6",
+      "kind": "next_step",
+      "priority": 90,
+      "when": {
+        "deficit": "B6",
+        "maxDeficits": 1
+      },
+      "sourceIds": [
+        "case",
+        "workflow",
+        "medical_team"
+      ],
+      "suggestedFeatures": [
+        "vitamin_B6",
+        "ferritin",
+        "TSAT",
+        "CRP",
+        "RDW"
+      ],
+      "text": "Предполагаемый моделью B6-дефицит сопоставьте с анамнезом и другими анализами. Рекомендуется оценить результаты B6, ферритина, TSAT, CRP и RDW; при необходимости — назначить недостающие исследования."
+    },
+    {
+      "id": "doctor.copper",
+      "topic": "copper",
+      "kind": "next_step",
+      "priority": 90,
+      "when": {
+        "deficit": "copper",
+        "maxDeficits": 1
+      },
+      "sourceIds": [
+        "case",
+        "workflow",
+        "medical_team"
+      ],
+      "suggestedFeatures": [
+        "copper",
+        "ceruloplasmin",
+        "vitamin_B6",
+        "ferritin",
+        "TSAT",
+        "CRP",
+        "vitamin_B12",
+        "folate"
+      ],
+      "text": "При модельном предположении дефицита меди рекомендуется оценить медь, церулоплазмин, B6, ферритин, TSAT, CRP, B12 и фолаты, назначить недостающие исследования по показаниям и сопоставить результаты с инструментальной диагностикой."
+    },
+    {
+      "id": "doctor.mixed",
+      "topic": "mixed",
+      "kind": "next_step",
+      "priority": 95,
+      "when": {
+        "mixed": true
+      },
+      "sourceIds": [
+        "case",
+        "workflow",
+        "medical_team"
+      ],
+      "suggestedFeatures": [
+        "vitamin_B12",
+        "folate",
+        "serum_iron",
+        "ferritin",
+        "TSAT",
+        "CRP",
+        "reticulocytes",
+        "RDW",
+        "sTfR"
+      ],
+      "text": "Модель допускает сочетанный дефицит ({deficits}). Сопоставьте результат с анамнезом, симптомами и инструментальным обследованием для оценки возможных внутренних кровотечений. Рекомендуется оценить B12, фолаты (витамин B9), сывороточное железо, ферритин, TSAT, CRP, ретикулоциты, RDW и sTfR; при необходимости — назначить недостающие исследования."
+    },
+    {
+      "id": "doctor.inflammation",
+      "topic": "inflammation",
+      "kind": "next_step",
+      "priority": 85,
+      "when": {
+        "inflammation": true,
+        "anemia": true
+      },
+      "sourceIds": [
+        "who_ferritin",
+        "medical_team"
+      ],
+      "suggestedFeatures": [
+        "ferritin",
+        "TSAT",
+        "CRP",
+        "reticulocytes",
+        "RDW",
+        "sTfR"
+      ],
+      "text": "При модельном предположении воспалительного компонента сопоставьте маркеры воспаления и обмена железа. Рекомендуется оценить ферритин, TSAT, CRP, ретикулоциты, RDW и sTfR; при необходимости — назначить недостающие исследования. Наличие воспаления не исключает одновременный железодефицит."
+    },
+    {
+      "id": "doctor.other",
+      "topic": "other",
+      "kind": "next_step",
+      "priority": 85,
+      "when": {
+        "anemiaClass": "anemia_other"
+      },
+      "sourceIds": [
+        "case",
+        "workflow",
+        "medical_team"
+      ],
+      "suggestedFeatures": [
+        "ferritin",
+        "TSAT",
+        "CRP",
+        "creatinine",
+        "eGFR",
+        "reticulocytes",
+        "RDW",
+        "vitamin_B12",
+        "MMA",
+        "folate",
+        "homocysteine"
+      ],
+      "text": "Категория anemia_other не подтверждает анемию неясного генеза после полного обследования. Продолжите дифференциальную оценку с учётом анамнеза, симптомов и инструментальной диагностики. Рекомендуется оценить ферритин, TSAT, CRP, креатинин, eGFR, ретикулоциты, RDW, B12, фолаты и гомоцистеин; MMA — опционально. При необходимости назначьте недостающие исследования."
+    },
+    {
+      "id": "doctor.latent",
+      "topic": "latent",
+      "kind": "conclusion",
+      "priority": 80,
+      "when": {
+        "nonAnemicDeficit": true
+      },
+      "sourceIds": [
+        "case",
+        "nice_b12"
+      ],
+      "suggestedFeatures": [],
+      "text": "Модель допускает дефицит без анемии. Нормальный Hb не отменяет верификацию соответствующих нутритивных гипотез."
+    },
+    {
+      "id": "doctor.ferritin_context",
+      "topic": "ferritin_context",
+      "kind": "next_step",
+      "priority": 70,
+      "when": {
+        "presentAll": [
+          "ferritin",
+          "CRP"
+        ]
+      },
+      "sourceIds": [
+        "who_ferritin",
+        "medical_team"
+      ],
+      "suggestedFeatures": [
+        "reticulocytes",
+        "RDW",
+        "sTfR",
+        "TSAT"
+      ],
+      "text": "Ферритин и CRP доступны; интерпретируйте ферритин с учётом воспалительного контекста, клиники и лабораторных референсов. Рекомендуется оценить ретикулоциты, RDW, sTfR и TSAT; при необходимости — назначить недостающие исследования."
+    },
+    {
+      "id": "doctor.vitamin_context",
+      "topic": "vitamin_context",
+      "kind": "next_step",
+      "priority": 65,
+      "when": {
+        "presentAll": [
+          "folate"
+        ],
+        "presentAny": [
+          "vitamin_B12",
+          "active_B12"
+        ]
+      },
+      "sourceIds": [
+        "nice_b12",
+        "workflow"
+      ],
+      "suggestedFeatures": [],
+      "text": "Общий или активный B12 и фолаты представлены одновременно. Сопоставьте методы, единицы, даты и сведения о приёме добавок; наличие анализов не подтверждает дефицит."
+    },
+    {
+      "id": "doctor.sparse",
+      "topic": "sparse",
+      "kind": "data_gap",
+      "priority": 100,
+      "when": {
+        "dataLevels": [
+          "insufficient"
+        ]
+      },
+      "sourceIds": [
+        "workflow"
+      ],
+      "suggestedFeatures": [],
+      "text": "Малая панель ограничивает этиологический вывод. Пропуски не являются отрицательными результатами, а количество заполненных полей не является уверенностью модели."
+    },
+    {
+      "id": "doctor.cbc_gap",
+      "topic": "cbc_gap",
+      "kind": "data_gap",
+      "priority": 90,
+      "when": {
+        "missingAny": [
+          "MCV",
+          "MCH"
+        ]
+      },
+      "sourceIds": [
+        "workflow"
+      ],
+      "suggestedFeatures": [
+        "MCV",
+        "MCH"
+      ],
+      "text": "Отсутствуют MCV и/или MCH, необходимые для контекста эритроцитарных индексов в прототипе. Восстановите доступные результаты ОАК; это не автоматическое назначение нового исследования."
+    },
+    {
+      "id": "doctor.iron_gap",
+      "topic": "iron_gap",
+      "kind": "data_gap",
+      "priority": 80,
+      "when": {
+        "missingAny": [
+          "ferritin"
+        ]
+      },
+      "sourceIds": [
+        "bsg_iron"
+      ],
+      "suggestedFeatures": [
+        "ferritin"
+      ],
+      "text": "Ферритин отсутствует; оценка запасов железа ограничена. Рассмотрите необходимость железной панели в клиническом контексте, не трактуя пропуск как отсутствие дефицита."
+    },
+    {
+      "id": "doctor.vitamin_gap",
+      "topic": "vitamin_gap",
+      "kind": "data_gap",
+      "priority": 75,
+      "when": {
+        "missingGroupsAny": [
+          "B12",
+          "folate"
+        ]
+      },
+      "sourceIds": [
+        "nice_b12",
+        "workflow"
+      ],
+      "suggestedFeatures": [
+        "vitamin_B12",
+        "folate"
+      ],
+      "text": "Нет общего/активного B12 и/или фолатов. Уточните показания к этим исследованиям по клинике и факторам риска; полный список 35 показателей не требуется автоматически."
+    },
+    {
+      "id": "doctor.model_absent",
+      "topic": "model_absent",
+      "kind": "conclusion",
+      "priority": 60,
+      "when": {
+        "modelStates": [
+          "not_connected",
+          "missing_verdict"
+        ]
+      },
+      "sourceIds": [
+        "workflow"
+      ],
+      "suggestedFeatures": [],
+      "text": "Вердикт обученной модели недоступен. Результат правила Hb и покрытие панели не заменяют прогноз дефицитов или причин анемии."
+    },
+    {
+      "id": "doctor.model_limited",
+      "topic": "model_limited",
+      "kind": "conclusion",
+      "priority": 65,
+      "when": {
+        "modelStates": [
+          "uncertain",
+          "out_of_scope",
+          "inconsistent",
+          "suppressed_sparse"
+        ]
+      },
+      "sourceIds": [
+        "workflow"
+      ],
+      "suggestedFeatures": [],
+      "text": "Этиологический вердикт не используется из-за недостаточных данных, неопределённости, выхода за область применимости или несогласованности. Проверьте причину ограничения."
+    },
+    {
+      "id": "doctor.follow_up",
+      "topic": "follow_up",
+      "kind": "next_step",
+      "priority": 10,
+      "when": {},
+      "sourceIds": [
+        "workflow"
+      ],
+      "suggestedFeatures": [],
+      "text": "Сопоставьте бланки, даты, симптомы и предшествующую терапию. Состав и сроки повторных исследований определяются индивидуально; пакет разных дат не считается одним моментом обследования."
+    }
+  ],
+  "editorialReview": {
+    "sourceId": "medical_team",
+    "date": "2026-10-04",
+    "scope": "text_corrections",
+    "topics": [
+      "hb_low",
+      "hb_not_low",
+      "iron",
+      "B12",
+      "folate",
+      "B6",
+      "copper",
+      "mixed",
+      "inflammation",
+      "other",
+      "ferritin_context"
+    ],
+    "clinicalValidation": false,
+    "interpretations": [
+      "Креатин трактован как креатинин (creatinine) по контексту eGFR; требует подтверждения команды.",
+      "Общий B12 указан приоритетно, активный — альтернативой; при наличии одного второй автоматически не предлагается.",
+      "Hb не ниже порога включает равенство; верхняя граница нормы не оценивается.",
+      "B9 и фолаты объединены; билирубин сопоставлен только с существующим полем непрямого билирубина.",
+      "Пункт latent не содержит правок, остальные темы 13–20 не затронуты."
+    ]
+  }
+}

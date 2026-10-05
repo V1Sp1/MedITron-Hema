@@ -1,0 +1,8 @@
+{
+  "purpose": "Administrator-reviewed local research bundles; SHA-256 checked before joblib load. Not a digital signature or clinical approval.",
+  "sha256": {
+    "experiments/baseline_v1/models/selected.joblib": "1dc7ef11da404d8db2eaf2bdda6c6766a78eee30637c2aba5b6353880258bd79",
+    "experiments/robust_v2/models/selected.joblib": "404a4bbecdb4f5bdec9cdac2a3ce6681e26f5b04c082ad733ea0fa9e520d6c19",
+    "experiments/calibrated_v3/models/selected.joblib": "3a2afdacaaceee2cada28230fc608738e7f255ceaa39c1d25f8d2435ec8b45f6"
+  }
+}

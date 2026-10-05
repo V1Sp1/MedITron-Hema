@@ -1,0 +1,18 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Hema XLSX checks</title><script src="../src/vendor/jszip.min.js"></script></head><body><h1>Hema · XLSX checks</h1><pre id="results">Running…</pre><script type="module">
+import {parseXLSX} from '../src/xlsx.js';
+import {screen} from '../src/screening.js';
+const ns='http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+async function fixture({shared=false,hiddenFirst=false,formula=false}={}){
+  const zip=new JSZip();
+  zip.file('xl/workbook.xml',`<workbook xmlns="${ns}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${hiddenFirst?'<sheet name="Hidden" state="hidden" r:id="rHidden"/>':''}<sheet name="Patients" sheetId="1" r:id="r1"/></sheets></workbook>`);
+  zip.file('xl/_rels/workbook.xml.rels','<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="r1" Target="/xl/worksheets/sheet1.xml"/></Relationships>');
+  const strings=['age_years','sex','hemoglobin','ferritin','anemia','F','M'];
+  if(shared)zip.file('xl/sharedStrings.xml',`<sst xmlns="${ns}">${strings.map(value=>`<si><t>${value}</t></si>`).join('')}</sst>`);
+  const text=(address,value)=>shared?`<c r="${address}" t="s"><v>${strings.indexOf(value)}</v></c>`:`<c r="${address}" t="inlineStr"><is><t>${value}</t></is></c>`;
+  zip.file('xl/worksheets/sheet1.xml',`<worksheet xmlns="${ns}"><sheetData><row r="1">${['age_years','sex','hemoglobin','ferritin','anemia'].map((value,i)=>text(String.fromCharCode(65+i)+'1',value)).join('')}</row><row r="2"><c r="A2"><v>42</v></c>${text('B2','F')}<c r="C2">${formula?'<f>100+20</f>':'<v>120</v>'}</c><c r="E2"><v>1</v></c></row><row r="3"><c r="A3"><v>50</v></c>${text('B3','M')}<c r="C3"><v>129</v></c><c r="E3"><v>0</v></c></row></sheetData></worksheet>`);
+  return zip.generateAsync({type:'arraybuffer',compression:'DEFLATE'});
+}
+const results=[];
+try{for(const shared of [false,true]){const parsed=await parseXLSX(await fixture({shared,hiddenFirst:true}));if(parsed.rows.length!==2||parsed.sheetName!=='Patients'||screen(parsed.rows[0]).anemia||!screen(parsed.rows[1]).anemia||screen(parsed.rows[0]).inputs.ferritin!==null||'anemia' in parsed.rows[0])throw new Error('Incorrect sheet data');results.push(`PASS: ${shared?'shared':'inline'} strings, hidden first sheet, sparse cells, label exclusion, Hb boundary`);}
+let rejected=false;try{await parseXLSX(await fixture({formula:true}));}catch{rejected=true;}if(!rejected)throw new Error('Formula without cached result was accepted');results.push('PASS: formula without cached value rejected');document.getElementById('results').textContent=results.join('\n')+'\nALL PASSED';}catch(error){document.getElementById('results').textContent=results.join('\n')+'\nFAIL: '+error.message;}
+</script></body></html>

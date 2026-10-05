@@ -1,0 +1,10 @@
+{
+  "purpose": "Explicitly trusted local research predictors of low biomarkers; never clinical deficiency or anemia diagnoses. No clinical validation implied.",
+  "bundles": {
+    "experiments/biochemical_v4/models/selected.joblib": {
+      "sha256": "59ffb63213b815500a1030408f9f1b07489625e39e1c81f5dfa1d9cde7b6836f",
+      "external_gates_sha256": "e8c20b099bea3c0e202b467cc64035f05b7eeb710ad1480ab6f456a36ce551ad",
+      "scope": "biochemical_research_only"
+    }
+  }
+}

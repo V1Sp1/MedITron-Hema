@@ -1,0 +1,1419 @@
+{
+  "schemaVersion": "laboratory-reports-v1",
+  "requestId": "c1cece05-096a-4ced-a009-8f0ef901111d",
+  "researchOnly": true,
+  "clinicalUseEnabled": false,
+  "stored": false,
+  "reports": [
+    {
+      "audience": "patient",
+      "inputs": {
+        "age_years": 42,
+        "sex": "F",
+        "hemoglobin": 105,
+        "RBC": 4.3,
+        "hematocrit": 31,
+        "MCV": 72,
+        "MCH": 24,
+        "MCHC": 339,
+        "RDW": 18,
+        "platelets": 250,
+        "WBC": 6,
+        "reticulocytes": 1,
+        "ferritin": 6,
+        "serum_iron": 4,
+        "transferrin": 3.8,
+        "TIBC": 80,
+        "UIBC": 76,
+        "TSAT": 5,
+        "sTfR": 5,
+        "Ret_He": 22,
+        "vitamin_B12": 450,
+        "active_B12": 80,
+        "MMA": 0.15,
+        "homocysteine": 9,
+        "folate": 10,
+        "vitamin_B6": 45,
+        "copper": 17,
+        "ceruloplasmin": 0.25,
+        "CRP": 1,
+        "ESR": 8,
+        "creatinine": 70,
+        "eGFR": 100,
+        "TSH": 2,
+        "albumin": 43,
+        "LDH": 180,
+        "indirect_bilirubin": 8,
+        "haptoglobin": 1.2
+      },
+      "hemoglobin": 105,
+      "threshold": 120,
+      "anemia": true,
+      "prediction": {
+        "code": "iron_deficiency_anemia",
+        "label": "Возможная железодефицитная анемия",
+        "hiddenDeficitLabel": "Модель допускает: Железо"
+      },
+      "modelVerdict": {
+        "anemiaClass": "iron_deficiency_anemia",
+        "deficits": [
+          "iron"
+        ],
+        "inflammation": false,
+        "status": "evaluated"
+      },
+      "deficiencies": [
+        "iron"
+      ],
+      "deficiencyProbabilities": [
+        {
+          "code": "iron",
+          "label": "Железо",
+          "probability": 0.9994075541964785
+        },
+        {
+          "code": "B12",
+          "label": "Витамин B12",
+          "probability": 0.00012763267316831411
+        },
+        {
+          "code": "folate",
+          "label": "Фолаты",
+          "probability": 0.006622424034101031
+        },
+        {
+          "code": "B6",
+          "label": "Витамин B6",
+          "probability": 0.007259307300214937
+        },
+        {
+          "code": "copper",
+          "label": "Медь",
+          "probability": 0.002149883536053272
+        }
+      ],
+      "anemiaProbabilities": [
+        {
+          "code": "B12_deficiency_anemia",
+          "label": "Возможная B12-дефицитная анемия",
+          "probability": 0.0015307165109034267
+        },
+        {
+          "code": "B12_deficiency_no_anemia",
+          "label": "Возможный дефицит B12 без анемии",
+          "probability": 0.0
+        },
+        {
+          "code": "B6_deficiency",
+          "label": "Возможный дефицит B6",
+          "probability": 0.01956359299215176
+        },
+        {
+          "code": "anemia_other",
+          "label": "Причина анемии требует уточнения",
+          "probability": 0.001878480302553055
+        },
+        {
+          "code": "copper_deficiency",
+          "label": "Возможный дефицит меди",
+          "probability": 0.002457590790826492
+        },
+        {
+          "code": "folate_deficiency_anemia",
+          "label": "Возможная фолатодефицитная анемия",
+          "probability": 0.0014133333333333333
+        },
+        {
+          "code": "folate_deficiency_no_anemia",
+          "label": "Возможный дефицит фолатов без анемии",
+          "probability": 0.00016
+        },
+        {
+          "code": "inflammation_anemia",
+          "label": "Возможная анемия на фоне воспаления",
+          "probability": 0.0042184397163120575
+        },
+        {
+          "code": "iron_deficiency_anemia",
+          "label": "Возможная железодефицитная анемия",
+          "probability": 0.8174607913975022
+        },
+        {
+          "code": "latent_deficiency",
+          "label": "Возможное дефицитное состояние без анемии",
+          "probability": 0.004819438176925399
+        },
+        {
+          "code": "mixed_deficiency",
+          "label": "Возможно сочетание дефицитов",
+          "probability": 0.14540467804636617
+        },
+        {
+          "code": "no_anemia_no_deficiency",
+          "label": "Порог анемии не достигнут",
+          "probability": 0.001092938733125649
+        }
+      ],
+      "modelConnected": true,
+      "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+      "source": "api",
+      "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
+      "missing": [],
+      "dataSufficiency": {
+        "level": "broader",
+        "summary": "Указано 35 из 35 лабораторных показателей; доступны базовый контекст ОАК и часть анализов на дефициты. Это не гарантирует точность вывода.",
+        "laboratoryCount": 35,
+        "laboratoryTotal": 35,
+        "availableFeatures": [
+          "hemoglobin",
+          "RBC",
+          "hematocrit",
+          "MCV",
+          "MCH",
+          "MCHC",
+          "RDW",
+          "platelets",
+          "WBC",
+          "reticulocytes",
+          "ferritin",
+          "serum_iron",
+          "transferrin",
+          "TIBC",
+          "UIBC",
+          "TSAT",
+          "sTfR",
+          "Ret_He",
+          "vitamin_B12",
+          "active_B12",
+          "MMA",
+          "homocysteine",
+          "folate",
+          "vitamin_B6",
+          "copper",
+          "ceruloplasmin",
+          "CRP",
+          "ESR",
+          "creatinine",
+          "eGFR",
+          "TSH",
+          "albumin",
+          "LDH",
+          "indirect_bilirubin",
+          "haptoglobin"
+        ],
+        "missingFeatures": [],
+        "missingEssential": [],
+        "missingCBCContext": [],
+        "canAssessAnemia": true,
+        "groups": [
+          {
+            "id": "iron",
+            "covered": true,
+            "available": [
+              "ferritin",
+              "TSAT",
+              "CRP"
+            ],
+            "initialTestAlternatives": []
+          },
+          {
+            "id": "B12",
+            "covered": true,
+            "available": [
+              "vitamin_B12",
+              "active_B12",
+              "MMA",
+              "homocysteine"
+            ],
+            "initialTestAlternatives": []
+          },
+          {
+            "id": "folate",
+            "covered": true,
+            "available": [
+              "folate"
+            ],
+            "initialTestAlternatives": []
+          },
+          {
+            "id": "B6",
+            "covered": true,
+            "available": [
+              "vitamin_B6"
+            ],
+            "initialTestAlternatives": []
+          },
+          {
+            "id": "copper",
+            "covered": true,
+            "available": [
+              "copper",
+              "ceruloplasmin"
+            ],
+            "initialTestAlternatives": []
+          }
+        ],
+        "reasonCodes": [],
+        "policyVersion": "coverage-draft-1.0",
+        "clinicalValidated": false,
+        "minimumLaboratoryValues": 5,
+        "modelConfidence": null
+      },
+      "warnings": [
+        "Модели исследовательские, scores не откалиброваны. Отсутствие анализа не считается нормой.",
+        "Оценки модели 0–1 не являются проверенной вероятностью заболевания. Низкие значения не исключают дефицит.",
+        "Исследовательский прототип: только синтетические или действительно обезличенные данные. Не использовать для диагностики, назначения лечения или исключения заболевания.",
+        "Часть текстов уточнена медицинской командой. Каталоги и правила достаточности остаются черновиком; клиническая валидация не выполнена."
+      ],
+      "researchOnly": true,
+      "calibrated": false,
+      "modelPanel": "primary",
+      "calibrationApplied": false,
+      "calibration": {
+        "status": "none",
+        "appliedHeads": [],
+        "retainedRawHeads": [
+          "primary/anemia_class",
+          "primary/iron_deficiency",
+          "primary/B12_deficiency",
+          "primary/folate_deficiency",
+          "primary/B6_deficiency",
+          "primary/copper_deficiency",
+          "primary/inflammation_anemia"
+        ],
+        "methods": {
+          "primary": {
+            "anemia_class": "identity",
+            "iron_deficiency": "identity",
+            "B12_deficiency": "identity",
+            "folate_deficiency": "identity",
+            "B6_deficiency": "identity",
+            "copper_deficiency": "identity",
+            "inflammation_anemia": "identity"
+          }
+        },
+        "scope": null,
+        "clinicalValidated": false,
+        "independentValidation": false,
+        "externalCalibration": false
+      },
+      "scoreMeaning": "uncalibrated_model_score",
+      "modelFamily": "baseline_v1",
+      "classScoresConditionedOnHb": false,
+      "decisionThreshold": 0.5,
+      "selectedModels": {
+        "anemia_class": "extra_trees",
+        "iron_deficiency": "catboost_dropout",
+        "B12_deficiency": "catboost_dropout",
+        "folate_deficiency": "catboost_dropout",
+        "B6_deficiency": "catboost",
+        "copper_deficiency": "catboost",
+        "inflammation_anemia": "catboost_dropout"
+      },
+      "deficiencyScores": [
+        {
+          "code": "iron",
+          "label": "Железо",
+          "score": 0.9994075541964785
+        },
+        {
+          "code": "B12",
+          "label": "Витамин B12",
+          "score": 0.00012763267316831411
+        },
+        {
+          "code": "folate",
+          "label": "Фолаты",
+          "score": 0.006622424034101031
+        },
+        {
+          "code": "B6",
+          "label": "Витамин B6",
+          "score": 0.007259307300214937
+        },
+        {
+          "code": "copper",
+          "label": "Медь",
+          "score": 0.002149883536053272
+        }
+      ],
+      "anemiaScores": [
+        {
+          "code": "B12_deficiency_anemia",
+          "label": "Возможная B12-дефицитная анемия",
+          "score": 0.0015307165109034267
+        },
+        {
+          "code": "B12_deficiency_no_anemia",
+          "label": "Возможный дефицит B12 без анемии",
+          "score": 0.0
+        },
+        {
+          "code": "B6_deficiency",
+          "label": "Возможный дефицит B6",
+          "score": 0.01956359299215176
+        },
+        {
+          "code": "anemia_other",
+          "label": "Причина анемии требует уточнения",
+          "score": 0.001878480302553055
+        },
+        {
+          "code": "copper_deficiency",
+          "label": "Возможный дефицит меди",
+          "score": 0.002457590790826492
+        },
+        {
+          "code": "folate_deficiency_anemia",
+          "label": "Возможная фолатодефицитная анемия",
+          "score": 0.0014133333333333333
+        },
+        {
+          "code": "folate_deficiency_no_anemia",
+          "label": "Возможный дефицит фолатов без анемии",
+          "score": 0.00016
+        },
+        {
+          "code": "inflammation_anemia",
+          "label": "Возможная анемия на фоне воспаления",
+          "score": 0.0042184397163120575
+        },
+        {
+          "code": "iron_deficiency_anemia",
+          "label": "Возможная железодефицитная анемия",
+          "score": 0.8174607913975022
+        },
+        {
+          "code": "latent_deficiency",
+          "label": "Возможное дефицитное состояние без анемии",
+          "score": 0.004819438176925399
+        },
+        {
+          "code": "mixed_deficiency",
+          "label": "Возможно сочетание дефицитов",
+          "score": 0.14540467804636617
+        },
+        {
+          "code": "no_anemia_no_deficiency",
+          "label": "Порог анемии не достигнут",
+          "score": 0.001092938733125649
+        }
+      ],
+      "modelDecisionState": "evaluated",
+      "decisionReasonCodes": [],
+      "ferritinScreening": {
+        "endpoint": "low_ferritin",
+        "label": "Ферритин: результат анализа",
+        "modelFamily": "biochemical_v4",
+        "modelVersion": "hema-biochemical-v4-59ffb63213b8",
+        "researchOnly": true,
+        "clinicalValidated": false,
+        "unit": "µg/L",
+        "markerUsedAsPredictor": false,
+        "pregnancyStatus": "unknown",
+        "status": "observed",
+        "observedValue": 6,
+        "message": "Ферритин измерен: показан результат анализа, модельный прогноз не выполнялся."
+      },
+      "pregnancyStatus": "unknown",
+      "modelConfiguration": "baseline_v1_plus_ferritin_v4",
+      "requestId": "c1cece05-096a-4ced-a009-8f0ef901111d",
+      "createdAt": "2026-10-05T10:57:06.399834+00:00",
+      "organizationId": "lab-demo",
+      "unitDictionaryVersion": "3d01da624a1b0ea5c205a11b4fed8222327cc4b9206185f1125e263c93be03b8",
+      "reportId": null,
+      "observationId": null,
+      "stored": false,
+      "clinicalUseEnabled": false,
+      "processingMode": "research",
+      "dataKind": "synthetic",
+      "policyVersion": "research-privacy-2026-10-04-v1",
+      "inputSource": "structured_json",
+      "observationRevision": null,
+      "recommendationSnapshot": {
+        "items": [
+          {
+            "id": "patient.iron",
+            "text": "Предполагаемый дефицит железа. Обсудите с врачом дальнейший план обследования для выявления причины. Препараты и их дозировку должен назначать врач. Для уточнения причины рекомендуется обсудить анализы на LDH, билирубин, гаптоглобин, ретикулоциты, RDW, ферритин, TSAT, sTfR, CRP и показатели MCH/MCHC или свериться с уже имеющимися результатами на приёме у врача.",
+            "kind": "next_step",
+            "topic": "iron",
+            "suggestedFeatures": [],
+            "sourceIds": [
+              "bsg_iron",
+              "medical_team"
+            ],
+            "reasonCodes": [
+              "iron"
+            ]
+          },
+          {
+            "id": "patient.ferritin_context",
+            "text": "Ферритин и показатель воспаления уже добавлены. Обсудите их вместе с врачом: воспаление может влиять на ферритин. Для уточнения картины рекомендуется оценить ретикулоциты, RDW, sTfR и TSAT; при необходимости — обсудить сдачу недостающих анализов.",
+            "kind": "next_step",
+            "topic": "ferritin_context",
+            "suggestedFeatures": [],
+            "sourceIds": [
+              "who_ferritin",
+              "medical_team"
+            ],
+            "reasonCodes": [
+              "ferritin_context"
+            ]
+          },
+          {
+            "id": "patient.vitamin_context",
+            "text": "Результаты B12 и фолатов уже добавлены. Передайте врачу оба бланка и сведения о добавках, чтобы обсуждать их вместе.",
+            "kind": "next_step",
+            "topic": "vitamin_context",
+            "suggestedFeatures": [],
+            "sourceIds": [
+              "nice_b12",
+              "workflow"
+            ],
+            "reasonCodes": [
+              "vitamin_context"
+            ]
+          },
+          {
+            "id": "patient.follow_up",
+            "text": "Сохраните бланки и даты исследований для обсуждения с врачом. Какие анализы повторять и когда, зависит от вашей ситуации.",
+            "kind": "next_step",
+            "topic": "follow_up",
+            "suggestedFeatures": [],
+            "sourceIds": [
+              "workflow"
+            ],
+            "reasonCodes": [
+              "follow_up"
+            ]
+          }
+        ],
+        "conclusions": [
+          {
+            "id": "patient.hb_low",
+            "text": "Гемоглобин ниже порога.",
+            "kind": "conclusion",
+            "topic": "hb_low",
+            "suggestedFeatures": [],
+            "sourceIds": [
+              "case",
+              "medical_team"
+            ],
+            "reasonCodes": [
+              "hb_low"
+            ]
+          }
+        ],
+        "dataSufficiency": {
+          "level": "broader",
+          "summary": "Указано 35 из 35 лабораторных показателей; доступны базовый контекст ОАК и часть анализов на дефициты. Это не гарантирует точность вывода.",
+          "laboratoryCount": 35,
+          "laboratoryTotal": 35,
+          "availableFeatures": [
+            "hemoglobin",
+            "RBC",
+            "hematocrit",
+            "MCV",
+            "MCH",
+            "MCHC",
+            "RDW",
+            "platelets",
+            "WBC",
+            "reticulocytes",
+            "ferritin",
+            "serum_iron",
+            "transferrin",
+            "TIBC",
+            "UIBC",
+            "TSAT",
+            "sTfR",
+            "Ret_He",
+            "vitamin_B12",
+            "active_B12",
+            "MMA",
+            "homocysteine",
+            "folate",
+            "vitamin_B6",
+            "copper",
+            "ceruloplasmin",
+            "CRP",
+            "ESR",
+            "creatinine",
+            "eGFR",
+            "TSH",
+            "albumin",
+            "LDH",
+            "indirect_bilirubin",
+            "haptoglobin"
+          ],
+          "missingFeatures": [],
+          "missingEssential": [],
+          "missingCBCContext": [],
+          "canAssessAnemia": true,
+          "groups": [
+            {
+              "id": "iron",
+              "covered": true,
+              "available": [
+                "ferritin",
+                "TSAT",
+                "CRP"
+              ],
+              "initialTestAlternatives": []
+            },
+            {
+              "id": "B12",
+              "covered": true,
+              "available": [
+                "vitamin_B12",
+                "active_B12",
+                "MMA",
+                "homocysteine"
+              ],
+              "initialTestAlternatives": []
+            },
+            {
+              "id": "folate",
+              "covered": true,
+              "available": [
+                "folate"
+              ],
+              "initialTestAlternatives": []
+            },
+            {
+              "id": "B6",
+              "covered": true,
+              "available": [
+                "vitamin_B6"
+              ],
+              "initialTestAlternatives": []
+            },
+            {
+              "id": "copper",
+              "covered": true,
+              "available": [
+                "copper",
+                "ceruloplasmin"
+              ],
+              "initialTestAlternatives": []
+            }
+          ],
+          "reasonCodes": [],
+          "policyVersion": "coverage-draft-1.0",
+          "clinicalValidated": false,
+          "minimumLaboratoryValues": 5,
+          "modelConfidence": null
+        },
+        "insufficientData": {
+          "active": false,
+          "hasGaps": false,
+          "summary": "Указано 35 из 35 лабораторных показателей; доступны базовый контекст ОАК и часть анализов на дефициты. Это не гарантирует точность вывода.",
+          "items": []
+        },
+        "verdictContext": {
+          "modelState": "evaluated",
+          "anemiaClass": "iron_deficiency_anemia",
+          "deficits": [
+            "iron"
+          ],
+          "inflammation": false,
+          "reasonCodes": []
+        },
+        "phraseFileVersion": "phrases-draft-1.2",
+        "status": "draft",
+        "clinicalReviewStatus": "draft",
+        "simulation": false,
+        "warnings": [
+          "Часть текстов уточнена медицинской командой. Каталоги и правила достаточности остаются черновиком; клиническая валидация не выполнена."
+        ]
+      },
+      "recommendations": [
+        {
+          "id": "patient.iron",
+          "text": "Предполагаемый дефицит железа. Обсудите с врачом дальнейший план обследования для выявления причины. Препараты и их дозировку должен назначать врач. Для уточнения причины рекомендуется обсудить анализы на LDH, билирубин, гаптоглобин, ретикулоциты, RDW, ферритин, TSAT, sTfR, CRP и показатели MCH/MCHC или свериться с уже имеющимися результатами на приёме у врача.",
+          "kind": "next_step",
+          "topic": "iron",
+          "suggestedFeatures": [],
+          "sourceIds": [
+            "bsg_iron",
+            "medical_team"
+          ],
+          "reasonCodes": [
+            "iron"
+          ]
+        },
+        {
+          "id": "patient.ferritin_context",
+          "text": "Ферритин и показатель воспаления уже добавлены. Обсудите их вместе с врачом: воспаление может влиять на ферритин. Для уточнения картины рекомендуется оценить ретикулоциты, RDW, sTfR и TSAT; при необходимости — обсудить сдачу недостающих анализов.",
+          "kind": "next_step",
+          "topic": "ferritin_context",
+          "suggestedFeatures": [],
+          "sourceIds": [
+            "who_ferritin",
+            "medical_team"
+          ],
+          "reasonCodes": [
+            "ferritin_context"
+          ]
+        },
+        {
+          "id": "patient.vitamin_context",
+          "text": "Результаты B12 и фолатов уже добавлены. Передайте врачу оба бланка и сведения о добавках, чтобы обсуждать их вместе.",
+          "kind": "next_step",
+          "topic": "vitamin_context",
+          "suggestedFeatures": [],
+          "sourceIds": [
+            "nice_b12",
+            "workflow"
+          ],
+          "reasonCodes": [
+            "vitamin_context"
+          ]
+        },
+        {
+          "id": "patient.follow_up",
+          "text": "Сохраните бланки и даты исследований для обсуждения с врачом. Какие анализы повторять и когда, зависит от вашей ситуации.",
+          "kind": "next_step",
+          "topic": "follow_up",
+          "suggestedFeatures": [],
+          "sourceIds": [
+            "workflow"
+          ],
+          "reasonCodes": [
+            "follow_up"
+          ]
+        }
+      ],
+      "recommendationConclusions": [
+        {
+          "id": "patient.hb_low",
+          "text": "Гемоглобин ниже порога.",
+          "kind": "conclusion",
+          "topic": "hb_low",
+          "suggestedFeatures": [],
+          "sourceIds": [
+            "case",
+            "medical_team"
+          ],
+          "reasonCodes": [
+            "hb_low"
+          ]
+        }
+      ],
+      "insufficientData": {
+        "active": false,
+        "hasGaps": false,
+        "summary": "Указано 35 из 35 лабораторных показателей; доступны базовый контекст ОАК и часть анализов на дефициты. Это не гарантирует точность вывода.",
+        "items": []
+      },
+      "recommendationVersion": "phrases-draft-1.2",
+      "recommendationStatus": "draft",
+      "clinicalReviewStatus": "draft"
+    },
+    {
+      "audience": "doctor",
+      "inputs": {
+        "age_years": 42,
+        "sex": "F",
+        "hemoglobin": 105,
+        "RBC": 4.3,
+        "hematocrit": 31,
+        "MCV": 72,
+        "MCH": 24,
+        "MCHC": 339,
+        "RDW": 18,
+        "platelets": 250,
+        "WBC": 6,
+        "reticulocytes": 1,
+        "ferritin": 6,
+        "serum_iron": 4,
+        "transferrin": 3.8,
+        "TIBC": 80,
+        "UIBC": 76,
+        "TSAT": 5,
+        "sTfR": 5,
+        "Ret_He": 22,
+        "vitamin_B12": 450,
+        "active_B12": 80,
+        "MMA": 0.15,
+        "homocysteine": 9,
+        "folate": 10,
+        "vitamin_B6": 45,
+        "copper": 17,
+        "ceruloplasmin": 0.25,
+        "CRP": 1,
+        "ESR": 8,
+        "creatinine": 70,
+        "eGFR": 100,
+        "TSH": 2,
+        "albumin": 43,
+        "LDH": 180,
+        "indirect_bilirubin": 8,
+        "haptoglobin": 1.2
+      },
+      "hemoglobin": 105,
+      "threshold": 120,
+      "anemia": true,
+      "prediction": {
+        "code": "iron_deficiency_anemia",
+        "label": "Возможная железодефицитная анемия",
+        "hiddenDeficitLabel": "Модель допускает: Железо"
+      },
+      "modelVerdict": {
+        "anemiaClass": "iron_deficiency_anemia",
+        "deficits": [
+          "iron"
+        ],
+        "inflammation": false,
+        "status": "evaluated"
+      },
+      "deficiencies": [
+        "iron"
+      ],
+      "deficiencyProbabilities": [
+        {
+          "code": "iron",
+          "label": "Железо",
+          "probability": 0.9994075541964785
+        },
+        {
+          "code": "B12",
+          "label": "Витамин B12",
+          "probability": 0.00012763267316831411
+        },
+        {
+          "code": "folate",
+          "label": "Фолаты",
+          "probability": 0.006622424034101031
+        },
+        {
+          "code": "B6",
+          "label": "Витамин B6",
+          "probability": 0.007259307300214937
+        },
+        {
+          "code": "copper",
+          "label": "Медь",
+          "probability": 0.002149883536053272
+        }
+      ],
+      "anemiaProbabilities": [
+        {
+          "code": "B12_deficiency_anemia",
+          "label": "Возможная B12-дефицитная анемия",
+          "probability": 0.0015307165109034267
+        },
+        {
+          "code": "B12_deficiency_no_anemia",
+          "label": "Возможный дефицит B12 без анемии",
+          "probability": 0.0
+        },
+        {
+          "code": "B6_deficiency",
+          "label": "Возможный дефицит B6",
+          "probability": 0.01956359299215176
+        },
+        {
+          "code": "anemia_other",
+          "label": "Причина анемии требует уточнения",
+          "probability": 0.001878480302553055
+        },
+        {
+          "code": "copper_deficiency",
+          "label": "Возможный дефицит меди",
+          "probability": 0.002457590790826492
+        },
+        {
+          "code": "folate_deficiency_anemia",
+          "label": "Возможная фолатодефицитная анемия",
+          "probability": 0.0014133333333333333
+        },
+        {
+          "code": "folate_deficiency_no_anemia",
+          "label": "Возможный дефицит фолатов без анемии",
+          "probability": 0.00016
+        },
+        {
+          "code": "inflammation_anemia",
+          "label": "Возможная анемия на фоне воспаления",
+          "probability": 0.0042184397163120575
+        },
+        {
+          "code": "iron_deficiency_anemia",
+          "label": "Возможная железодефицитная анемия",
+          "probability": 0.8174607913975022
+        },
+        {
+          "code": "latent_deficiency",
+          "label": "Возможное дефицитное состояние без анемии",
+          "probability": 0.004819438176925399
+        },
+        {
+          "code": "mixed_deficiency",
+          "label": "Возможно сочетание дефицитов",
+          "probability": 0.14540467804636617
+        },
+        {
+          "code": "no_anemia_no_deficiency",
+          "label": "Порог анемии не достигнут",
+          "probability": 0.001092938733125649
+        }
+      ],
+      "modelConnected": true,
+      "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+      "source": "api",
+      "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
+      "missing": [],
+      "dataSufficiency": {
+        "level": "broader",
+        "summary": "Панель 35/35 содержит Hb, MCV, MCH и маркеры железа/B12/фолатов. Покрытие не является оценкой калибровки модели.",
+        "laboratoryCount": 35,
+        "laboratoryTotal": 35,
+        "availableFeatures": [
+          "hemoglobin",
+          "RBC",
+          "hematocrit",
+          "MCV",
+          "MCH",
+          "MCHC",
+          "RDW",
+          "platelets",
+          "WBC",
+          "reticulocytes",
+          "ferritin",
+          "serum_iron",
+          "transferrin",
+          "TIBC",
+          "UIBC",
+          "TSAT",
+          "sTfR",
+          "Ret_He",
+          "vitamin_B12",
+          "active_B12",
+          "MMA",
+          "homocysteine",
+          "folate",
+          "vitamin_B6",
+          "copper",
+          "ceruloplasmin",
+          "CRP",
+          "ESR",
+          "creatinine",
+          "eGFR",
+          "TSH",
+          "albumin",
+          "LDH",
+          "indirect_bilirubin",
+          "haptoglobin"
+        ],
+        "missingFeatures": [],
+        "missingEssential": [],
+        "missingCBCContext": [],
+        "canAssessAnemia": true,
+        "groups": [
+          {
+            "id": "iron",
+            "covered": true,
+            "available": [
+              "ferritin",
+              "TSAT",
+              "CRP"
+            ],
+            "initialTestAlternatives": []
+          },
+          {
+            "id": "B12",
+            "covered": true,
+            "available": [
+              "vitamin_B12",
+              "active_B12",
+              "MMA",
+              "homocysteine"
+            ],
+            "initialTestAlternatives": []
+          },
+          {
+            "id": "folate",
+            "covered": true,
+            "available": [
+              "folate"
+            ],
+            "initialTestAlternatives": []
+          },
+          {
+            "id": "B6",
+            "covered": true,
+            "available": [
+              "vitamin_B6"
+            ],
+            "initialTestAlternatives": []
+          },
+          {
+            "id": "copper",
+            "covered": true,
+            "available": [
+              "copper",
+              "ceruloplasmin"
+            ],
+            "initialTestAlternatives": []
+          }
+        ],
+        "reasonCodes": [],
+        "policyVersion": "coverage-draft-1.0",
+        "clinicalValidated": false,
+        "minimumLaboratoryValues": 5,
+        "modelConfidence": null
+      },
+      "warnings": [
+        "Модели исследовательские, scores не откалиброваны. Отсутствие анализа не считается нормой.",
+        "Оценки модели 0–1 не являются проверенной вероятностью заболевания. Низкие значения не исключают дефицит.",
+        "Исследовательский прототип: только синтетические или действительно обезличенные данные. Не использовать для диагностики, назначения лечения или исключения заболевания.",
+        "Часть текстов уточнена медицинской командой. Каталоги и правила достаточности остаются черновиком; клиническая валидация не выполнена."
+      ],
+      "researchOnly": true,
+      "calibrated": false,
+      "modelPanel": "primary",
+      "calibrationApplied": false,
+      "calibration": {
+        "status": "none",
+        "appliedHeads": [],
+        "retainedRawHeads": [
+          "primary/anemia_class",
+          "primary/iron_deficiency",
+          "primary/B12_deficiency",
+          "primary/folate_deficiency",
+          "primary/B6_deficiency",
+          "primary/copper_deficiency",
+          "primary/inflammation_anemia"
+        ],
+        "methods": {
+          "primary": {
+            "anemia_class": "identity",
+            "iron_deficiency": "identity",
+            "B12_deficiency": "identity",
+            "folate_deficiency": "identity",
+            "B6_deficiency": "identity",
+            "copper_deficiency": "identity",
+            "inflammation_anemia": "identity"
+          }
+        },
+        "scope": null,
+        "clinicalValidated": false,
+        "independentValidation": false,
+        "externalCalibration": false
+      },
+      "scoreMeaning": "uncalibrated_model_score",
+      "modelFamily": "baseline_v1",
+      "classScoresConditionedOnHb": false,
+      "decisionThreshold": 0.5,
+      "selectedModels": {
+        "anemia_class": "extra_trees",
+        "iron_deficiency": "catboost_dropout",
+        "B12_deficiency": "catboost_dropout",
+        "folate_deficiency": "catboost_dropout",
+        "B6_deficiency": "catboost",
+        "copper_deficiency": "catboost",
+        "inflammation_anemia": "catboost_dropout"
+      },
+      "deficiencyScores": [
+        {
+          "code": "iron",
+          "label": "Железо",
+          "score": 0.9994075541964785
+        },
+        {
+          "code": "B12",
+          "label": "Витамин B12",
+          "score": 0.00012763267316831411
+        },
+        {
+          "code": "folate",
+          "label": "Фолаты",
+          "score": 0.006622424034101031
+        },
+        {
+          "code": "B6",
+          "label": "Витамин B6",
+          "score": 0.007259307300214937
+        },
+        {
+          "code": "copper",
+          "label": "Медь",
+          "score": 0.002149883536053272
+        }
+      ],
+      "anemiaScores": [
+        {
+          "code": "B12_deficiency_anemia",
+          "label": "Возможная B12-дефицитная анемия",
+          "score": 0.0015307165109034267
+        },
+        {
+          "code": "B12_deficiency_no_anemia",
+          "label": "Возможный дефицит B12 без анемии",
+          "score": 0.0
+        },
+        {
+          "code": "B6_deficiency",
+          "label": "Возможный дефицит B6",
+          "score": 0.01956359299215176
+        },
+        {
+          "code": "anemia_other",
+          "label": "Причина анемии требует уточнения",
+          "score": 0.001878480302553055
+        },
+        {
+          "code": "copper_deficiency",
+          "label": "Возможный дефицит меди",
+          "score": 0.002457590790826492
+        },
+        {
+          "code": "folate_deficiency_anemia",
+          "label": "Возможная фолатодефицитная анемия",
+          "score": 0.0014133333333333333
+        },
+        {
+          "code": "folate_deficiency_no_anemia",
+          "label": "Возможный дефицит фолатов без анемии",
+          "score": 0.00016
+        },
+        {
+          "code": "inflammation_anemia",
+          "label": "Возможная анемия на фоне воспаления",
+          "score": 0.0042184397163120575
+        },
+        {
+          "code": "iron_deficiency_anemia",
+          "label": "Возможная железодефицитная анемия",
+          "score": 0.8174607913975022
+        },
+        {
+          "code": "latent_deficiency",
+          "label": "Возможное дефицитное состояние без анемии",
+          "score": 0.004819438176925399
+        },
+        {
+          "code": "mixed_deficiency",
+          "label": "Возможно сочетание дефицитов",
+          "score": 0.14540467804636617
+        },
+        {
+          "code": "no_anemia_no_deficiency",
+          "label": "Порог анемии не достигнут",
+          "score": 0.001092938733125649
+        }
+      ],
+      "modelDecisionState": "evaluated",
+      "decisionReasonCodes": [],
+      "ferritinScreening": {
+        "endpoint": "low_ferritin",
+        "label": "Ферритин: результат анализа",
+        "modelFamily": "biochemical_v4",
+        "modelVersion": "hema-biochemical-v4-59ffb63213b8",
+        "researchOnly": true,
+        "clinicalValidated": false,
+        "unit": "µg/L",
+        "markerUsedAsPredictor": false,
+        "pregnancyStatus": "unknown",
+        "status": "observed",
+        "observedValue": 6,
+        "message": "Ферритин измерен: показан результат анализа, модельный прогноз не выполнялся."
+      },
+      "pregnancyStatus": "unknown",
+      "modelConfiguration": "baseline_v1_plus_ferritin_v4",
+      "requestId": "c1cece05-096a-4ced-a009-8f0ef901111d",
+      "createdAt": "2026-10-05T10:57:06.399834+00:00",
+      "organizationId": "lab-demo",
+      "unitDictionaryVersion": "3d01da624a1b0ea5c205a11b4fed8222327cc4b9206185f1125e263c93be03b8",
+      "reportId": null,
+      "observationId": null,
+      "stored": false,
+      "clinicalUseEnabled": false,
+      "processingMode": "research",
+      "dataKind": "synthetic",
+      "policyVersion": "research-privacy-2026-10-04-v1",
+      "inputSource": "structured_json",
+      "observationRevision": null,
+      "recommendationSnapshot": {
+        "items": [
+          {
+            "id": "doctor.iron",
+            "text": "Рекомендуется проверить наличие железодефицита по маркерам обмена железа и оценить возможные причины, включая кровопотери и нарушение всасывания, с учётом анамнеза. Обратите внимание на результаты LDH, билирубина, гаптоглобина, ретикулоцитов, RDW, ферритина, TSAT, sTfR и CRP для уточнения причины патологии.",
+            "kind": "next_step",
+            "topic": "iron",
+            "suggestedFeatures": [],
+            "sourceIds": [
+              "bsg_iron",
+              "medical_team"
+            ],
+            "reasonCodes": [
+              "iron"
+            ]
+          },
+          {
+            "id": "doctor.ferritin_context",
+            "text": "Ферритин и CRP доступны; интерпретируйте ферритин с учётом воспалительного контекста, клиники и лабораторных референсов. Рекомендуется оценить ретикулоциты, RDW, sTfR и TSAT; при необходимости — назначить недостающие исследования.",
+            "kind": "next_step",
+            "topic": "ferritin_context",
+            "suggestedFeatures": [],
+            "sourceIds": [
+              "who_ferritin",
+              "medical_team"
+            ],
+            "reasonCodes": [
+              "ferritin_context"
+            ]
+          },
+          {
+            "id": "doctor.vitamin_context",
+            "text": "Общий или активный B12 и фолаты представлены одновременно. Сопоставьте методы, единицы, даты и сведения о приёме добавок; наличие анализов не подтверждает дефицит.",
+            "kind": "next_step",
+            "topic": "vitamin_context",
+            "suggestedFeatures": [],
+            "sourceIds": [
+              "nice_b12",
+              "workflow"
+            ],
+            "reasonCodes": [
+              "vitamin_context"
+            ]
+          },
+          {
+            "id": "doctor.follow_up",
+            "text": "Сопоставьте бланки, даты, симптомы и предшествующую терапию. Состав и сроки повторных исследований определяются индивидуально; пакет разных дат не считается одним моментом обследования.",
+            "kind": "next_step",
+            "topic": "follow_up",
+            "suggestedFeatures": [],
+            "sourceIds": [
+              "workflow"
+            ],
+            "reasonCodes": [
+              "follow_up"
+            ]
+          }
+        ],
+        "conclusions": [
+          {
+            "id": "doctor.hb_low",
+            "text": "Hb ниже порога для указанного пола. Этиология анемии не устанавливается по одному Hb; сопоставьте результат с клиникой и остальными исследованиями.",
+            "kind": "conclusion",
+            "topic": "hb_low",
+            "suggestedFeatures": [],
+            "sourceIds": [
+              "case",
+              "medical_team"
+            ],
+            "reasonCodes": [
+              "hb_low"
+            ]
+          }
+        ],
+        "dataSufficiency": {
+          "level": "broader",
+          "summary": "Панель 35/35 содержит Hb, MCV, MCH и маркеры железа/B12/фолатов. Покрытие не является оценкой калибровки модели.",
+          "laboratoryCount": 35,
+          "laboratoryTotal": 35,
+          "availableFeatures": [
+            "hemoglobin",
+            "RBC",
+            "hematocrit",
+            "MCV",
+            "MCH",
+            "MCHC",
+            "RDW",
+            "platelets",
+            "WBC",
+            "reticulocytes",
+            "ferritin",
+            "serum_iron",
+            "transferrin",
+            "TIBC",
+            "UIBC",
+            "TSAT",
+            "sTfR",
+            "Ret_He",
+            "vitamin_B12",
+            "active_B12",
+            "MMA",
+            "homocysteine",
+            "folate",
+            "vitamin_B6",
+            "copper",
+            "ceruloplasmin",
+            "CRP",
+            "ESR",
+            "creatinine",
+            "eGFR",
+            "TSH",
+            "albumin",
+            "LDH",
+            "indirect_bilirubin",
+            "haptoglobin"
+          ],
+          "missingFeatures": [],
+          "missingEssential": [],
+          "missingCBCContext": [],
+          "canAssessAnemia": true,
+          "groups": [
+            {
+              "id": "iron",
+              "covered": true,
+              "available": [
+                "ferritin",
+                "TSAT",
+                "CRP"
+              ],
+              "initialTestAlternatives": []
+            },
+            {
+              "id": "B12",
+              "covered": true,
+              "available": [
+                "vitamin_B12",
+                "active_B12",
+                "MMA",
+                "homocysteine"
+              ],
+              "initialTestAlternatives": []
+            },
+            {
+              "id": "folate",
+              "covered": true,
+              "available": [
+                "folate"
+              ],
+              "initialTestAlternatives": []
+            },
+            {
+              "id": "B6",
+              "covered": true,
+              "available": [
+                "vitamin_B6"
+              ],
+              "initialTestAlternatives": []
+            },
+            {
+              "id": "copper",
+              "covered": true,
+              "available": [
+                "copper",
+                "ceruloplasmin"
+              ],
+              "initialTestAlternatives": []
+            }
+          ],
+          "reasonCodes": [],
+          "policyVersion": "coverage-draft-1.0",
+          "clinicalValidated": false,
+          "minimumLaboratoryValues": 5,
+          "modelConfidence": null
+        },
+        "insufficientData": {
+          "active": false,
+          "hasGaps": false,
+          "summary": "Панель 35/35 содержит Hb, MCV, MCH и маркеры железа/B12/фолатов. Покрытие не является оценкой калибровки модели.",
+          "items": []
+        },
+        "verdictContext": {
+          "modelState": "evaluated",
+          "anemiaClass": "iron_deficiency_anemia",
+          "deficits": [
+            "iron"
+          ],
+          "inflammation": false,
+          "reasonCodes": []
+        },
+        "phraseFileVersion": "phrases-draft-1.2",
+        "status": "draft",
+        "clinicalReviewStatus": "draft",
+        "simulation": false,
+        "warnings": [
+          "Часть текстов уточнена медицинской командой. Каталоги и правила достаточности остаются черновиком; клиническая валидация не выполнена."
+        ]
+      },
+      "recommendations": [
+        {
+          "id": "doctor.iron",
+          "text": "Рекомендуется проверить наличие железодефицита по маркерам обмена железа и оценить возможные причины, включая кровопотери и нарушение всасывания, с учётом анамнеза. Обратите внимание на результаты LDH, билирубина, гаптоглобина, ретикулоцитов, RDW, ферритина, TSAT, sTfR и CRP для уточнения причины патологии.",
+          "kind": "next_step",
+          "topic": "iron",
+          "suggestedFeatures": [],
+          "sourceIds": [
+            "bsg_iron",
+            "medical_team"
+          ],
+          "reasonCodes": [
+            "iron"
+          ]
+        },
+        {
+          "id": "doctor.ferritin_context",
+          "text": "Ферритин и CRP доступны; интерпретируйте ферритин с учётом воспалительного контекста, клиники и лабораторных референсов. Рекомендуется оценить ретикулоциты, RDW, sTfR и TSAT; при необходимости — назначить недостающие исследования.",
+          "kind": "next_step",
+          "topic": "ferritin_context",
+          "suggestedFeatures": [],
+          "sourceIds": [
+            "who_ferritin",
+            "medical_team"
+          ],
+          "reasonCodes": [
+            "ferritin_context"
+          ]
+        },
+        {
+          "id": "doctor.vitamin_context",
+          "text": "Общий или активный B12 и фолаты представлены одновременно. Сопоставьте методы, единицы, даты и сведения о приёме добавок; наличие анализов не подтверждает дефицит.",
+          "kind": "next_step",
+          "topic": "vitamin_context",
+          "suggestedFeatures": [],
+          "sourceIds": [
+            "nice_b12",
+            "workflow"
+          ],
+          "reasonCodes": [
+            "vitamin_context"
+          ]
+        },
+        {
+          "id": "doctor.follow_up",
+          "text": "Сопоставьте бланки, даты, симптомы и предшествующую терапию. Состав и сроки повторных исследований определяются индивидуально; пакет разных дат не считается одним моментом обследования.",
+          "kind": "next_step",
+          "topic": "follow_up",
+          "suggestedFeatures": [],
+          "sourceIds": [
+            "workflow"
+          ],
+          "reasonCodes": [
+            "follow_up"
+          ]
+        }
+      ],
+      "recommendationConclusions": [
+        {
+          "id": "doctor.hb_low",
+          "text": "Hb ниже порога для указанного пола. Этиология анемии не устанавливается по одному Hb; сопоставьте результат с клиникой и остальными исследованиями.",
+          "kind": "conclusion",
+          "topic": "hb_low",
+          "suggestedFeatures": [],
+          "sourceIds": [
+            "case",
+            "medical_team"
+          ],
+          "reasonCodes": [
+            "hb_low"
+          ]
+        }
+      ],
+      "insufficientData": {
+        "active": false,
+        "hasGaps": false,
+        "summary": "Панель 35/35 содержит Hb, MCV, MCH и маркеры железа/B12/фолатов. Покрытие не является оценкой калибровки модели.",
+        "items": []
+      },
+      "recommendationVersion": "phrases-draft-1.2",
+      "recommendationStatus": "draft",
+      "clinicalReviewStatus": "draft"
+    }
+  ]
+}

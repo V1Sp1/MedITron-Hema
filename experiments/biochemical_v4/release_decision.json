@@ -1,0 +1,19 @@
+{
+  "default_clinical_model": "baseline_v1",
+  "clinical_model_replaced": false,
+  "clinicalValidated": false,
+  "accepted_biochemical_heads": [
+    "low_ferritin/extended",
+    "low_ferritin/cbc",
+    "low_B12/extended",
+    "low_PLP/extended",
+    "low_PLP/cbc"
+  ],
+  "rejected_biochemical_heads": [
+    "low_B12/cbc"
+  ],
+  "reason": "Never replace clinical deficiency/anemia-class heads with marker heads. Accepted heads can only be exposed as a separate research biochemical predictor.",
+  "weights_sha256": "59ffb63213b815500a1030408f9f1b07489625e39e1c81f5dfa1d9cde7b6836f",
+  "selection_sha256": "4ea09dbbf18cc3b8ddc8d021e255c0f81492412c3c7710130efcd86b8ae25d87",
+  "test_opened_at_utc": "2026-10-04T21:50:40.553756+00:00"
+}

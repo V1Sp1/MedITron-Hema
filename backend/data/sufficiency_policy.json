@@ -1,0 +1,14 @@
+{
+  "version": "coverage-draft-1.0",
+  "clinicalValidated": false,
+  "minimumLaboratoryValues": 5,
+  "cbcContext": ["hemoglobin", "MCV", "MCH"],
+  "broaderContextGroups": ["iron", "B12", "folate"],
+  "groups": [
+    {"id": "iron", "alternatives": [["ferritin"]], "features": ["ferritin", "TSAT", "CRP"]},
+    {"id": "B12", "alternatives": [["vitamin_B12"], ["active_B12"]], "features": ["vitamin_B12", "active_B12", "MMA", "homocysteine"]},
+    {"id": "folate", "alternatives": [["folate"]], "features": ["folate"]},
+    {"id": "B6", "alternatives": [["vitamin_B6"]], "features": ["vitamin_B6"]},
+    {"id": "copper", "alternatives": [["copper"]], "features": ["copper", "ceruloplasmin"]}
+  ]
+}

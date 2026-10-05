@@ -1,0 +1,17 @@
+{
+  "age_years": 40,
+  "sex": "F",
+  "hemoglobin": 110,
+  "RBC": 4,
+  "hematocrit": 33,
+  "MCV": 82,
+  "MCH": 27.5,
+  "MCHC": 333,
+  "RDW": 17,
+  "platelets": 350,
+  "WBC": 7,
+  "CRP": 3,
+  "creatinine": 70,
+  "albumin": 40,
+  "LDH": 180
+}

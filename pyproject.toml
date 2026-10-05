@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "local-lab-parser"
+version = "0.1.0"
+description = "Local PDF laboratory reports to upload observations"
+requires-python = ">=3.11"
+dependencies = ["pdfplumber==0.11.9"]
+
+[project.optional-dependencies]
+server = ["fastapi==0.142.2", "starlette==1.7.0", "uvicorn==0.54.0", "python-multipart==0.0.32", "reportlab==4.4.9"]
+model = ["numpy==2.3.5", "pandas==2.2.3", "scikit-learn==1.9.1", "catboost==1.2.10", "joblib==1.6.0", "scipy==1.18.1", "threadpoolctl==3.7.0"]
+test = ["reportlab==4.4.9", "httpx==0.28.1"]
+integration = ["httpx==0.28.1"]
+
+[project.scripts]
+lab-parser = "lab_parser.cli:main"
+hema-server = "backend.__main__:main"
+hema-accounts = "backend.accounts:main"
+
+[tool.setuptools.package-data]
+lab_parser = ["data/*.json", "*.swift"]
+backend = ["data/*.json"]
+
+[tool.setuptools.packages.find]
+include = ["lab_parser*", "backend*", "ml_baselines*"]

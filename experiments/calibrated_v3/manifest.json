@@ -1,0 +1,85 @@
+{
+  "model_family": "calibrated_v3",
+  "base_family": "baseline_v1",
+  "started_at": "2026-10-04T23:23:03.604548+03:00",
+  "seed": 20261003,
+  "outer_folds": 5,
+  "inner_folds": 3,
+  "policy": {
+    "minimum_relative_log_loss_gain": 0.02,
+    "maximum_brier_increase": 0.001,
+    "maximum_ece_increase": 0.01,
+    "maximum_f1_loss": 0.02,
+    "external_weight_ratio": 0.1,
+    "external_minimum_mean_f1_gain": 0.01,
+    "default_promotion_requires_fresh_validation": true
+  },
+  "source_sha256": "9d97e125c961a92222eb31c86188ba7a7736ece1ba59ce296d32e300b107dbb6",
+  "dictionary_sha256": "3d01da624a1b0ea5c205a11b4fed8222327cc4b9206185f1125e263c93be03b8",
+  "split_sha256": "8d1476de4100b67c3634c6e2c1958e304c4d353f0cadc24c775d1ad92d0de8ae",
+  "code_sha256": {
+    "advanced.py": "175d796f08bfbf1404ee30270011be02cfff321fbe66f8afb99bb9bb5fa5511e",
+    "predict.py": "55f525896e2584bd8a9af5fa1cbd02ff50dd51b001c3d89ea66f1c41bf312009",
+    "__init__.py": "9a5107d9d3e4c5c9ce64dbc9a9ce067d5a01d1540a1758db1d5f4626fef79e94",
+    "core.py": "84d7668cfaaced184bbc506eced55e1434844472b02d494c3a42f8776caae3c8",
+    "improvement_report.py": "5605717a83dddda3374346c85feec411bce181c11b05359216554110e05530ff",
+    "improve.py": "c792c2a3f1cc294f393c3fe91f0df51a089a633e698d718d9bc87cfc02dce3e0",
+    "train.py": "e524eb76911fa4d59e71d66337b73787593d99b00ca52eaaad42c56efed264e4",
+    "calibrate.py": "ed0d6f120e05c3a52b86a1e0f0c2a058cf88c16fb26790d27a7c4937ee67919a",
+    "report.py": "532fd2adb52950b05d247807b6b41da0d28eeb0cb8f982507efcf62abe2337fb",
+    "calibration.py": "37c4bb85f9bf6ed038bf961fefcee0bd46e35993010557f2386f20f9aacc0cc3"
+  },
+  "versions": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.9.1",
+    "catboost": "1.2.10",
+    "scipy": "1.18.1",
+    "joblib": "1.6.0"
+  },
+  "development_n": 672,
+  "reused_holdout_n": 168,
+  "holdout_is_reused": true,
+  "clinical_validated": false,
+  "binary_threshold": 0.5,
+  "primary_calibration_views": [
+    "available",
+    "drop30",
+    "drop60"
+  ],
+  "cbc_calibration_views": [
+    "cbc_only"
+  ],
+  "protocol": "Each outer training subset generates inner OOF scores; calibrators never see outer validation patients or labels. Each patient has total calibration weight 1 across views. Frozen v1 base architecture selection used all development folds earlier; residual selection optimism remains.",
+  "external": {
+    "source": {
+      "url": "https://data.mendeley.com/datasets/dt89jydgnv/1",
+      "version": 1,
+      "license": "CC BY 4.0",
+      "authors": [
+        "Serhat Kılıçarslan",
+        "Mete Celik",
+        "Safak Şahin"
+      ]
+    },
+    "normalization": "verified_only_10_features",
+    "target_profile": "source_partial_positive_only",
+    "n_positive": {
+      "iron_deficiency": 4152,
+      "B12_deficiency": 195,
+      "folate_deficiency": 150
+    },
+    "unknown_loss_weight": 0,
+    "excluded_quality_flags": true,
+    "deduplication": "full_raw_feature_vector_group",
+    "calibration_source": false,
+    "files_sha256": {
+      "rules.json": "d1a520a443212a20a19aa97dec3e7dc9e91792f66162d88615eaa2c043fce699",
+      "case_units_verified_source_partial.csv": "e961fa2067a361d38b63ef87bdf8fcec9c68903b2feb79422e6205f6e2d4ac72",
+      "row_audit.csv": "4bacdd467bfdd3dd3ba5bdb5319a61d7f9722f4604240d06c313da6b1f540c56"
+    }
+  },
+  "warning": "Case labels are partly synthetic; positive-only external source labels are weak transferred labels. Calibration does not establish clinical probability. No external negative or multiclass labels are inferred.",
+  "finished_at": "2026-10-04T23:24:33.823908+03:00",
+  "elapsed_seconds": 90.20916616700015
+}

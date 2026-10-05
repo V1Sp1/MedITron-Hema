@@ -1,0 +1,18 @@
+import {demoNotice} from './report-details.js';
+import {ferritinDetailsHTML} from './ferritin.js';
+export const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function reportHTML(report){
+  const e=escapeHTML;const doctor=report.audience==='doctor';
+  const probabilities=doctor?[['Типы анемии',report.anemia?(report.anemiaScores??report.anemiaProbabilities):[]],['Дефициты',(report.deficiencyScores??report.deficiencyProbabilities)]].map(([title,items])=>items?.length?`<h2>${title}</h2><table>${items.map(item=>`<tr><td>${e(item.label)}</td><td>${Number(item.score??item.probability).toFixed(3)}</td></tr>`).join('')}</table>`:'').join(''):'';
+  return `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Hema — отчёт</title><style>body{max-width:760px;margin:48px auto;padding:0 24px;font:16px/1.6 Arial,sans-serif;color:#103648}header{border-bottom:3px solid #0deacf;padding-bottom:20px}h1{font-size:40px;margin:0}h2{font-size:20px;margin-top:28px}.note{padding:16px;background:#eef7f4}table{border-collapse:collapse;width:100%}td{border-bottom:1px solid #dce4e5;padding:8px}td:last-child{text-align:right}button{padding:12px;border:0;background:#0deacf;color:#103648;cursor:pointer}@media print{button{display:none}body{margin:0;max-width:none}}</style></head><body><header><h1>Hema<span style="color:#067d73">.</span></h1><div>by NeuroNiXxx · ${doctor?'Для врача':'Для пациента'}</div><small>${e(new Date(report.createdAt??Date.now()).toLocaleString('ru-RU'))}</small></header><p class="note">${report.source==='demo'?'ДЕМОНСТРАЦИЯ. '+e(demoNotice(report)):report.source==='local-rule'?'Локальный расчёт Hb. Модель дефицитов и сервис рекомендаций не подключены.':'Исследовательский результат. Клиническое применение не разрешено. Оценки 0–1 не являются вероятностью заболевания.'}</p><h2>Статус анемии</h2><p>${report.anemia?'Признаки анемии по порогу Hb':'Анемия по порогу Hb не выявлена'} · Hb ${e(report.hemoglobin)} г/л · порог ${e(report.threshold)} г/л.</p><h2>Предполагаемое состояние</h2><p>${e(report.prediction?.label??'Тип анемии не определён.')}</p><p>${e(report.prediction?.hiddenDeficitLabel??'Скрытые дефициты не оценены.')}</p>${ferritinDetailsHTML(report,e)}${probabilities}<h2>Рекомендации</h2>${report.recommendations?.length?'<ul>'+report.recommendations.map(item=>'<li>'+e(item.text)+'</li>').join('')+'</ul>':'<p>Рекомендации появятся после подключения сервиса проверенных фраз.</p>'}<h2>Ограничения</h2><p>Этот результат не заменяет медицинское заключение. Нормальный гемоглобин не исключает дефициты.</p>${(report.warnings??[]).map(text=>'<p>'+e(text)+'</p>').join('')}<p><small>Версия файла фраз: ${e(report.recommendationVersion??'не подключён')}. ID отчёта: ${e(report.reportId??'локальный')}.</small></p><button onclick="window.print()">Печать / сохранить в PDF</button></body></html>`;
+}
+export function printReport(){
+  // Print the current result in place. @media print removes input/navigation and formats the report.
+  window.print();
+}
+export function downloadReport(report,format='json',audience=report.audience){
+  if(!['json','pdf'].includes(format))throw new Error('Поддерживаются PDF и JSON.');
+  const content=format==='pdf'?report:JSON.stringify({...report,createdAt:report.createdAt??new Date().toISOString()},null,2);
+  const url=URL.createObjectURL(new Blob([content],{type:format==='pdf'?'application/pdf':'application/json'}));
+  const link=document.createElement('a');link.href=url;link.download=`Hema-${audience}-report.${format}`;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
