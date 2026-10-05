@@ -285,12 +285,12 @@
     {
       "path": "docs/04_FRONTEND.html",
       "size_bytes": 25948,
-      "sha256": "346f4db1eac470af0c2dbbc31d3a8bdb6cb026510d2a266fdffd0325dd0818c6"
+      "sha256": "e806aae91b06ac3e747b09b1fd3be9d046738397ad4a0d26410d6571b63f1204"
     },
     {
       "path": "docs/04_FRONTEND.md",
       "size_bytes": 23781,
-      "sha256": "14ec3f2e49449f4971e25caee51e6b1a62b9735029a88c3d6b5c8f1a5096aa74"
+      "sha256": "5d478d9a497649c37983cdb5b1e3774a73b54ed3b3184f4743fc7ca5eeb02dd8"
     },
     {
       "path": "docs/05_RECOMMENDATIONS.html",
@@ -525,7 +525,7 @@
     {
       "path": "examples/full-demo/README.md",
       "size_bytes": 2628,
-      "sha256": "aecf0d089fb59b01e2e4ed264f82551b25e7d09e026de674927e96700c031281"
+      "sha256": "d48ea76d474d027a5ab3d3582f9fe20b7e566919dd478c711388beef8dab77ca"
     },
     {
       "path": "examples/full-demo/input_panels.csv",
@@ -535,17 +535,17 @@
     {
       "path": "examples/full-demo/reports.json",
       "size_bytes": 508779,
-      "sha256": "c9b118462acededac3dcc7ea05469e4cf5f784fd9876753d5a17e92e5f98f631"
+      "sha256": "e01902ecce1374aa72d1161c60e40795b662dafce3f3baa3a219a0a0ec350728"
     },
     {
       "path": "examples/laboratory_api/sample-pdf-reports.json",
       "size_bytes": 52155,
-      "sha256": "330b8ddd193e0ace337692adaeb96447879b442d0063c370e5c8f80508c6b0b8"
+      "sha256": "d2c82d89825752e6bc81e0a0faa24577c25e85628a9ad61507d1914666fe57b4"
     },
     {
       "path": "examples/laboratory_api/sample-reports.json",
       "size_bytes": 50909,
-      "sha256": "15aecf2fcff24af2637570c97ca9ee1d0317c267beebec681c88a2c6b32f1991"
+      "sha256": "858963cc1acf019b4352a062f66f940ad44fe10c98ed48075f8c60ca9955165c"
     },
     {
       "path": "examples/laboratory_api/structured_request.json",
@@ -1190,7 +1190,7 @@
     {
       "path": "frontend/API_CONTRACT.md",
       "size_bytes": 17825,
-      "sha256": "94e197e46fc9d175b94714beb732b4115ff9a04e7b2b345554a48a91494026fd"
+      "sha256": "0b26b0cacdb248eb568cf0e2d73ab5b71e21f3a6d3612dd0c312df4c3f57a6fc"
     },
     {
       "path": "frontend/README.md",
@@ -1305,7 +1305,7 @@
     {
       "path": "frontend/src/demo-scenarios.js",
       "size_bytes": 508875,
-      "sha256": "e29371ab3fa4916d675134334dde81d328d84e90a092d881ca88447903074e83"
+      "sha256": "644c5b574880513132530454f9d6d486b0001d3e085d8dc2f595b4a5e94e09e2"
     },
     {
       "path": "frontend/src/demo.js",
@@ -1724,8 +1724,8 @@
     },
     {
       "path": "scripts/prepare_public_release.py",
-      "size_bytes": 38461,
-      "sha256": "aac2502d9b76a171919b4bc5a7c65a1ed854633a0fbe93195b04fe07c5e99ceb"
+      "size_bytes": 39193,
+      "sha256": "8e41b89a65aef9b264ee50d40096bfa8dd0715081edc94e2a50b41927cb41e58"
     },
     {
       "path": "scripts/verify_handoff.py",
@@ -1829,8 +1829,8 @@
     },
     {
       "path": "docs/PUBLIC_RELEASE_VERIFICATION.json",
-      "size_bytes": 1109,
-      "sha256": "a9b7c1e170d94c11c1d46c4e7c9601ab1add733fc25e8063d7f64336773330cc"
+      "size_bytes": 1417,
+      "sha256": "1c4ad93934d2c7044cf8ff109fc6a25e1e50026bc46aeffd585e6492381ca635"
     }
   ]
 }

@@ -19,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-EXCLUDED_ROOT = {"AGENTS.md", "RELEASE_NOTES.md", "DEMO_ACCESS_OPTIONS.md", "README.md", "START_HERE.html"}
+EXCLUDED_ROOT = {"AGENTS.md", "PROJECT_CONTEXT.md", "DEMO_ACCESS_OPTIONS.md", "README.md", "START_HERE.html"}
 EXCLUDED_DATA = {
     "data/case/case_current.pdf", "data/case/case_original_superseded.pdf",
     "data/reference/medical_text_corrections_2026-10-04.docx",
@@ -57,7 +57,7 @@ def portable_text(text: str) -> str:
     text = text.replace(str(ROOT), ".")
     text = re.sub(r"/Users/[^/\s]+/Downloads/[^\n`\"<>|]+", "исходный материал кейса (не включён)", text)
     text = re.sub(r"/(?:private/)?var/folders/[^\s`\"<>|]+", "temporary-verification-directory", text)
-    text = text.replace("RELEASE_NOTES.md", "RELEASE_NOTES.md")
+    text = text.replace("PROJECT_CONTEXT.md", "RELEASE_NOTES.md")
     return text
 
 
@@ -327,6 +327,21 @@ def main():
                        "public_sha256": digest(destination), "removed_metadata": removed,
                        "synthetic_panels_checked": len(views), "predictions_equivalent_at_1e_12": True,
                        "max_absolute_difference": difference})
+
+    # Saved demonstrations remain real-inference snapshots with public artifact IDs.
+    for path in target.rglob("*"):
+        if not path.is_file() or path.suffix not in {".json", ".js", ".md", ".html"}:
+            continue
+        relative = path.relative_to(target)
+        if relative.parts[0] not in {"frontend", "examples", "docs"}:
+            continue
+        text = path.read_text("utf-8")
+        updated = text
+        for model in models[:3]:
+            prefix = "hema-" + model["family"].replace("_", "-") + "-"
+            updated = updated.replace(prefix + model["original_sha256"][:12], prefix + model["public_sha256"][:12])
+        if updated != text:
+            path.write_text(updated, encoding="utf-8")
 
     trust_path = target / "backend/data/model_trust.json"
     trust = json.loads(trust_path.read_text("utf-8"))

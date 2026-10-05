@@ -28,7 +28,7 @@
   "hemoglobin":108,
   "threshold":120,
   "modelConnected":true,
-  "modelVersion":"hema-baseline-v1-b413ce1e45d6",
+  "modelVersion":"hema-baseline-v1-1dc7ef11da40",
   "modelPanel":"primary",
   "modelDecisionState":"suppressed_sparse",
   "researchOnly":true,

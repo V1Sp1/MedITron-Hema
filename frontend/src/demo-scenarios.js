@@ -154,7 +154,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -408,7 +408,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -652,7 +652,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -906,7 +906,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -1156,7 +1156,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -1410,7 +1410,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -1654,7 +1654,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -1908,7 +1908,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -2158,7 +2158,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -2412,7 +2412,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -2657,7 +2657,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -2911,7 +2911,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -3162,7 +3162,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [
@@ -3418,7 +3418,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -3663,7 +3663,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [
@@ -3919,7 +3919,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -4170,7 +4170,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -4424,7 +4424,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -4669,7 +4669,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -4923,7 +4923,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -5176,7 +5176,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -5430,7 +5430,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -5678,7 +5678,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -5932,7 +5932,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -6180,7 +6180,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -6434,7 +6434,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -6672,7 +6672,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -6926,7 +6926,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -7170,7 +7170,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -7424,7 +7424,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -7663,7 +7663,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -7917,7 +7917,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -8101,7 +8101,7 @@ export const scenarios = [
         ],
         "anemiaProbabilities": [],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -8294,7 +8294,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -8458,7 +8458,7 @@ export const scenarios = [
         ],
         "anemiaProbabilities": [],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -8651,7 +8651,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -8823,7 +8823,7 @@ export const scenarios = [
         ],
         "anemiaProbabilities": [],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -9019,7 +9019,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -9199,7 +9199,7 @@ export const scenarios = [
         ],
         "anemiaProbabilities": [],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -9395,7 +9395,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -9579,7 +9579,7 @@ export const scenarios = [
         ],
         "anemiaProbabilities": [],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -9775,7 +9775,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -9953,7 +9953,7 @@ export const scenarios = [
         ],
         "anemiaProbabilities": [],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -10149,7 +10149,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -10394,7 +10394,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -10651,7 +10651,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -10889,7 +10889,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [],
@@ -11146,7 +11146,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -11331,7 +11331,7 @@ export const scenarios = [
         ],
         "anemiaProbabilities": [],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [
@@ -11530,7 +11530,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -11713,7 +11713,7 @@ export const scenarios = [
         ],
         "anemiaProbabilities": [],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [
@@ -11912,7 +11912,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -12164,7 +12164,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [
@@ -12454,7 +12454,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -12712,7 +12712,7 @@ export const scenarios = [
           }
         ],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [
@@ -13002,7 +13002,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -13175,7 +13175,7 @@ export const scenarios = [
         "deficiencyProbabilities": [],
         "anemiaProbabilities": [],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [
@@ -13395,7 +13395,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {
@@ -13589,7 +13589,7 @@ export const scenarios = [
         "deficiencyProbabilities": [],
         "anemiaProbabilities": [],
         "modelConnected": true,
-        "modelVersion": "hema-baseline-v1-b413ce1e45d6",
+        "modelVersion": "hema-baseline-v1-1dc7ef11da40",
         "source": "demo",
         "method": "Порог Hb из кейса СУ и локальные исследовательские модели baseline_v1",
         "missing": [
@@ -13809,7 +13809,7 @@ export const scenarios = [
         "demoProvenance": {
           "inputSource": "authored_synthetic_panel",
           "predictionSource": "trusted_local_model",
-          "modelVersion": "hema-baseline-v1-b413ce1e45d6"
+          "modelVersion": "hema-baseline-v1-1dc7ef11da40"
         },
         "recommendations": [
           {

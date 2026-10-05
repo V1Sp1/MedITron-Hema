@@ -32,5 +32,21 @@
     "passed": 35,
     "failed": 0
   },
-  "full_python_suite": "In progress; an assertion failure is being investigated. Smoke verification passed."
+  "full_python_suite": {
+    "total": 180,
+    "passed": 168,
+    "skipped": 12,
+    "failed": 0,
+    "duration_seconds": 62.52,
+    "skip_reason": "Excluded row-level research datasets and external PDF fixtures"
+  },
+  "document_links": {
+    "html_pages_checked": 23,
+    "broken_links": 0
+  },
+  "anonymous_github_access": {
+    "http_status": 200,
+    "private": false
+  },
+  "public_snapshot_date": "2026-10-05"
 }
